@@ -1,7 +1,7 @@
 /**
  * Liquid distortion transition: a fullscreen-quad WebGL shader that melts one
  * image into the next through flowing fractal noise, with a rising noisy
- * reveal front, slight chromatic aberration and a thin cyan edge glow.
+ * reveal front, slight chromatic aberration and a thin cyan edge.
  */
 
 const VERTEX = `
@@ -35,8 +35,9 @@ float fbm(vec2 p) {
   return v;
 }
 
-vec3 sampleRGB(sampler2D tex, vec2 uv, vec2 shift) {
-  return vec3(texture2D(tex, uv + shift).r, texture2D(tex, uv).g, texture2D(tex, uv - shift).b);
+vec4 sampleRGBA(sampler2D tex, vec2 uv, vec2 shift) {
+  vec4 c = texture2D(tex, uv);
+  return vec4(texture2D(tex, uv + shift).r, c.g, texture2D(tex, uv - shift).b, c.a);
 }
 
 void main() {
@@ -56,16 +57,12 @@ void main() {
   float m = smoothstep(field - 0.09, field + 0.09, front);
 
   vec2 ca = dir * 0.01 * bump;
-  vec3 col = mix(sampleRGB(uFrom, uvFrom, ca), sampleRGB(uTo, uvTo, ca), m);
+  vec4 col = mix(sampleRGBA(uFrom, uvFrom, ca), sampleRGBA(uTo, uvTo, ca), m);
 
   float edge = 1.0 - smoothstep(0.0, 0.022, abs(field - front));
-  col += vec3(0.0, 0.85, 0.91) * edge * bump * 0.22;
+  col.rgb = mix(col.rgb, vec3(0.0, 0.76, 0.82) * col.a, edge * bump * 0.45);
 
-  float vig = smoothstep(0.0, 0.14, uv.x) * smoothstep(1.0, 0.86, uv.x)
-            * smoothstep(0.0, 0.12, uv.y) * smoothstep(1.0, 0.88, uv.y);
-  col *= mix(1.0, vig, bump);
-
-  gl_FragColor = vec4(col, 1.0);
+  gl_FragColor = col;
 }`;
 
 export type Liquid = {
@@ -88,7 +85,7 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
 
 /** Returns null when WebGL is unavailable, so callers can fall back to a crossfade. */
 export function createLiquid(canvas: HTMLCanvasElement, images: HTMLImageElement[]): Liquid | null {
-  const gl = canvas.getContext("webgl", { alpha: false, antialias: false, premultipliedAlpha: false });
+  const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: true });
   if (!gl) return null;
 
   const vs = compile(gl, gl.VERTEX_SHADER, VERTEX);
@@ -109,6 +106,7 @@ export function createLiquid(canvas: HTMLCanvasElement, images: HTMLImageElement
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
   const textures = images.map((img) => {
     const tex = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -135,6 +133,8 @@ export function createLiquid(canvas: HTMLCanvasElement, images: HTMLImageElement
       gl.bindTexture(gl.TEXTURE_2D, textures[to]);
     },
     render(progress, time) {
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform1f(uProgress, progress);
       gl.uniform1f(uTime, time);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

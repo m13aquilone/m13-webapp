@@ -46,10 +46,10 @@ export function Partners({ partners }: { partners: Partner[] }) {
   return (
     <section aria-labelledby="partners-heading" className="border-t border-line pt-16 pb-20 md:pt-24 md:pb-28">
       <div data-reveal className="container-edge flex items-end justify-between gap-6">
-        <h2 id="partners-heading" className="wdth-wide text-[clamp(1.75rem,3.6vw,3.25rem)] font-[680] leading-none tracking-[-0.035em] text-bone">
+        <h2 id="partners-heading" className="wdth-wide text-[clamp(1.75rem,3.6vw,3.25rem)] font-[680] leading-none tracking-[-0.035em] text-fg">
           Partnering with
         </h2>
-        <span className="text-label shrink-0 pb-1 text-ash">({String(partners.length).padStart(2, "0")})</span>
+        <span className="text-label shrink-0 pb-1 text-muted">({String(partners.length).padStart(2, "0")})</span>
       </div>
 
       <div

@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#f6f5f0",
   colorScheme: "dark",
 };
 
@@ -57,7 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${archivo.variable} ${instrument.variable} ${plexMono.variable} antialiased`}
     >
-      <body className="flex min-h-dvh flex-col bg-ink text-bone">
+      <body className="flex min-h-dvh flex-col bg-paper text-fg">
         <SiteHeader logo={getLogo()} />
         <main id="main" tabIndex={-1} className="flex-1 focus-visible:outline-none">
           {children}

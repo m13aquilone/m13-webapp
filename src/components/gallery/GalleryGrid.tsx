@@ -34,7 +34,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
               aria-pressed={filter === c}
               onClick={() => setFilter(c)}
               className={`text-label py-2 transition-colors ${
-                filter === c ? "text-bone underline decoration-olive underline-offset-[10px]" : "text-ash hover:text-bone"
+                filter === c ? "text-fg underline decoration-olive underline-offset-[10px]" : "text-muted hover:text-fg"
               }`}
             >
               {c}
@@ -50,7 +50,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
               <button
                 type="button"
                 onClick={() => setOpen(i)}
-                className="group block w-full overflow-hidden bg-graphite"
+                className="group block w-full overflow-hidden bg-surface-2"
                 aria-label={`Open image: ${image.alt}`}
               >
                 <Image
@@ -63,7 +63,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                   className="h-auto w-full transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.02]"
                 />
               </button>
-              {image.caption && <figcaption className="text-label mt-3 leading-relaxed text-ash">{image.caption}</figcaption>}
+              {image.caption && <figcaption className="text-label mt-3 leading-relaxed text-muted">{image.caption}</figcaption>}
             </figure>
           </li>
         ))}

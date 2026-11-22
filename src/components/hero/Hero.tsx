@@ -20,7 +20,7 @@ import {
 } from "./morph";
 import { createLiquid, type Liquid } from "./liquid";
 
-type Frame = ImageAsset & { alt: string };
+type Frame = ImageAsset & { alt: string; caption?: string };
 type Mode = "liquid" | "prism" | "particles";
 
 /** Prism mode: number of slats and the delay between neighbouring slats (fraction of a transition). */
@@ -30,22 +30,19 @@ const STAGGER = 0.06;
 /** How much of the canvas extends beyond the image area, so bursts aren't clipped. */
 const BLEED = 0.18;
 
-function fitBox(cw: number, ch: number, aspect: number) {
-  const w = Math.min(cw, ch * aspect);
-  return { w, h: w / aspect };
-}
-
 export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; transition?: Mode }) {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const visualRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const prismRef = useRef<HTMLDivElement>(null);
   const glRef = useRef<HTMLCanvasElement>(null);
   const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
   const counterRef = useRef<HTMLSpanElement>(null);
+  const captionRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const barRef = useRef<HTMLSpanElement>(null);
 
   const animated = frames.length > 1;
@@ -58,10 +55,11 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
     const stage = stageRef.current;
     const visual = visualRef.current;
     const tilt = tiltRef.current;
+    const frame = frameRef.current;
     const canvas = canvasRef.current;
     const prismBox = prismRef.current;
     const glCanvas = glRef.current;
-    if (!section || !stage || !visual || !tilt) return;
+    if (!section || !stage || !visual || !tilt || !frame) return;
     if (prism ? !prismBox : liquidMode ? !glCanvas : !canvas) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -114,36 +112,20 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
 
     const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
     let box: Box = { cx: 0, cy: 0, w: 0, h: 0 };
-    const aspect = frames[0].width / frames[0].height;
     let half = 0;
     const slats = prismBox ? (Array.from(prismBox.children) as HTMLElement[]) : [];
     const faces = slats.map((slat) => Array.from(slat.children) as HTMLElement[]);
     const shades = faces.map((pair) => pair.map((face) => face.firstElementChild as HTMLElement));
     const glDpr = Math.min(window.devicePixelRatio || 1, 2);
     const resize = () => {
-      const cw = visual.offsetWidth;
-      const ch = visual.offsetHeight;
+      const fit = { w: frame.offsetWidth, h: frame.offsetHeight };
       if (glCanvas) {
-        const fit = fitBox(cw, ch, aspect);
-        Object.assign(glCanvas.style, {
-          left: `${(cw - fit.w) / 2}px`,
-          top: `${(ch - fit.h) / 2}px`,
-          width: `${fit.w}px`,
-          height: `${fit.h}px`,
-        });
         liquid?.resize(Math.round(fit.w * glDpr), Math.round(fit.h * glDpr));
         return;
       }
       if (prismBox) {
-        const fit = fitBox(cw, ch, aspect);
         const sw = fit.w / SLATS;
         half = sw / 2;
-        Object.assign(prismBox.style, {
-          left: `${(cw - fit.w) / 2}px`,
-          top: `${(ch - fit.h) / 2}px`,
-          width: `${fit.w}px`,
-          height: `${fit.h}px`,
-        });
         slats.forEach((slat, i) => {
           slat.style.left = `${i * sw}px`;
           slat.style.width = `${sw}px`;
@@ -157,14 +139,18 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
         return;
       }
       if (!canvas) return;
-      canvas.width = Math.round(cw * (1 + BLEED * 2) * dpr);
-      canvas.height = Math.round(ch * (1 + BLEED * 2) * dpr);
-      const fit = fitBox(cw, ch, aspect);
-      box = { cx: canvas.width / 2, cy: canvas.height / 2, w: fit.w * dpr, h: fit.h * dpr };
+      canvas.width = Math.round(fit.w * (1 + BLEED * 2) * dpr);
+      canvas.height = Math.round(fit.h * (1 + BLEED * 2) * dpr);
+      box = {
+        cx: canvas.width / 2,
+        cy: canvas.height / 2,
+        w: fit.w * dpr,
+        h: fit.h * dpr,
+      };
     };
     resize();
     const ro = new ResizeObserver(resize);
-    ro.observe(visual);
+    ro.observe(frame);
 
     let pointerX = 0;
     let pointerY = 0;
@@ -223,7 +209,12 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
           prismBox!.style.visibility = "visible";
           frames.forEach((_, i) => {
             const img = imgRefs.current[i];
-            if (img) Object.assign(img.style, { opacity: "0", transform: "none", filter: "none" });
+            if (img)
+              Object.assign(img.style, {
+                opacity: "0",
+                transform: "none",
+                filter: "none",
+              });
           });
           prismShown = true;
         }
@@ -253,7 +244,12 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
           glCanvas!.style.visibility = "visible";
           frames.forEach((_, i) => {
             const img = imgRefs.current[i];
-            if (img) Object.assign(img.style, { opacity: "0", transform: "none", filter: "none" });
+            if (img)
+              Object.assign(img.style, {
+                opacity: "0",
+                transform: "none",
+                filter: "none",
+              });
           });
           liquidShown = true;
         }
@@ -266,12 +262,13 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
       const fadeOut = morphing ? smoothstep(0, 0.3, t) : smoothstep(0.05, 0.6, t);
       const fadeIn = morphing ? 1 - smoothstep(0.7, 1, t) : 1 - smoothstep(0.4, 0.95, t);
 
-      if (!prismActive && !liquidActive) frames.forEach((_, i) => {
-        if (i === from && from === to) styleFrame(i, 0, 0);
-        else if (i === from) styleFrame(i, fadeOut, 0);
-        else if (i === to) styleFrame(i, 0, fadeIn);
-        else styleFrame(i, 0, 1);
-      });
+      if (!prismActive && !liquidActive)
+        frames.forEach((_, i) => {
+          if (i === from && from === to) styleFrame(i, 0, 0);
+          else if (i === from) styleFrame(i, fadeOut, 0);
+          else if (i === to) styleFrame(i, 0, fadeIn);
+          else styleFrame(i, 0, 1);
+        });
 
       if (morphing && transitions && ctx) {
         drawTransition(ctx, transitions[from], t, box, (compact ? 1.9 : 1.8) * dpr);
@@ -288,6 +285,20 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
       tiltY += (pointerY - tiltY) * 0.06;
       const float = Math.sin((now - start) / 1400) * 8;
       tilt!.style.transform = `translate3d(0,${float}px,0) rotateX(${-tiltY * 7}deg) rotateY(${tiltX * 10}deg)`;
+
+      captionRefs.current.forEach((el, i) => {
+        if (!el) return;
+        let hide = 1;
+        let dir = 1;
+        if (i === from) {
+          hide = from === to ? 0 : smoothstep(0.15, 0.45, t);
+          dir = -1;
+        } else if (i === to) {
+          hide = 1 - smoothstep(0.55, 0.85, t);
+        }
+        el.style.opacity = String(1 - hide);
+        el.style.transform = `translate3d(0,${dir * hide * 0.9}em,0)`;
+      });
 
       const step = t > 0.5 ? to : from;
       if (step !== lastStep && counterRef.current) {
@@ -311,7 +322,10 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
     };
   }, [animated, frames, prism, liquidMode, transition]);
 
-  const sequenceLabel = frames.map((f) => f.alt).join(", which transforms into ");
+  const sequenceLabel = frames
+    .map((f) => (f.caption ? `${f.caption}: ${f.alt}` : f.alt))
+    .join(", which transforms into ");
+  const hasCaptions = frames.some((f) => f.caption);
 
   return (
     <section
@@ -328,7 +342,7 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
         <div
           ref={glowRef}
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_45%_at_50%_35%,rgb(34_197_94/0.16),transparent_70%)] opacity-35 lg:bg-[radial-gradient(40%_55%_at_70%_48%,rgb(34_197_94/0.16),transparent_70%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_42%_at_50%_32%,rgb(75_83_32/0.12),transparent_70%)] opacity-35 lg:bg-[radial-gradient(36%_50%_at_70%_50%,rgb(75_83_32/0.12),transparent_70%)]"
         />
 
         {frames.length > 0 && (
@@ -336,112 +350,140 @@ export function Hero({ frames, transition = "liquid" }: { frames: Frame[]; trans
             ref={visualRef}
             role="img"
             aria-label={sequenceLabel}
-            className="absolute inset-x-4 top-[13dvh] h-[36dvh] [perspective:1400px] sm:inset-x-[12%] lg:inset-y-[9dvh] lg:right-[3%] lg:left-[40%] lg:h-auto"
+            className="absolute inset-x-2 top-[11dvh] h-[40dvh] [container-type:size] [perspective:1400px] sm:inset-x-[8%] lg:inset-y-[6dvh] lg:right-[1%] lg:left-[42%] lg:h-auto"
           >
             <div ref={tiltRef} className="absolute inset-0 [transform-style:preserve-3d] will-change-transform">
-              {frames.map((frame, i) => (
-                <Image
-                  key={frame.src}
-                  ref={(el) => {
-                    imgRefs.current[i] = el;
-                  }}
-                  src={frame.src}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1024px) 60vw, 90vw"
-                  quality={90}
-                  preload={i === 0}
-                  loading={i === 0 ? undefined : "eager"}
-                  className="object-contain mix-blend-screen will-change-transform [mask-image:linear-gradient(to_bottom,#000_78%,transparent)]"
-                  style={{ opacity: i === 0 ? 1 : 0 }}
-                />
-              ))}
-              {liquidMode ? (
-                <canvas
-                  ref={glRef}
-                  aria-hidden
-                  className="pointer-events-none invisible absolute [mask-image:linear-gradient(to_bottom,#000_78%,transparent)]"
-                />
-              ) : prism ? (
-                <div
-                  ref={prismRef}
-                  aria-hidden
-                  className="pointer-events-none invisible absolute [transform-style:preserve-3d]"
-                >
-                  {Array.from({ length: SLATS }, (_, i) => (
-                    <div key={i} className="absolute top-0 h-full [transform-style:preserve-3d]">
-                      {[0, 1].map((k) => (
-                        <div
-                          key={k}
-                          className="absolute inset-y-0 left-0 bg-no-repeat [backface-visibility:hidden] [mask-image:linear-gradient(to_bottom,#000_78%,transparent)]"
-                        >
-                          <span className="absolute inset-0 bg-ink opacity-0" />
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <canvas
-                  ref={canvasRef}
-                  aria-hidden
-                  className="pointer-events-none absolute"
-                  style={{
-                    inset: `${-BLEED * 100}%`,
-                    width: `${100 + BLEED * 200}%`,
-                    height: `${100 + BLEED * 200}%`,
-                  }}
-                />
-              )}
+              <div
+                ref={frameRef}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d]"
+                style={{
+                  width: `min(100cqw, ${(frames[0].width / frames[0].height) * 100}cqh)`,
+                  aspectRatio: `${frames[0].width} / ${frames[0].height}`,
+                }}
+              >
+                {frames.map((frame, i) => (
+                  <Image
+                    key={frame.src}
+                    ref={(el) => {
+                      imgRefs.current[i] = el;
+                    }}
+                    src={frame.src}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 60vw, 90vw"
+                    quality={90}
+                    preload={i === 0}
+                    loading={i === 0 ? undefined : "eager"}
+                    className="object-cover will-change-transform"
+                    style={{ opacity: i === 0 ? 1 : 0 }}
+                  />
+                ))}
+                {liquidMode ? (
+                  <canvas
+                    ref={glRef}
+                    aria-hidden
+                    className="pointer-events-none invisible absolute inset-0 h-full w-full"
+                  />
+                ) : prism ? (
+                  <div
+                    ref={prismRef}
+                    aria-hidden
+                    className="pointer-events-none invisible absolute inset-0 [transform-style:preserve-3d]"
+                  >
+                    {Array.from({ length: SLATS }, (_, i) => (
+                      <div key={i} className="absolute top-0 h-full [transform-style:preserve-3d]">
+                        {[0, 1].map((k) => (
+                          <div key={k} className="absolute inset-y-0 left-0 bg-no-repeat [backface-visibility:hidden]">
+                            <span className="absolute inset-0 bg-fg opacity-0" />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <canvas
+                    ref={canvasRef}
+                    aria-hidden
+                    className="pointer-events-none absolute"
+                    style={{
+                      inset: `${-BLEED * 100}%`,
+                      width: `${100 + BLEED * 200}%`,
+                      height: `${100 + BLEED * 200}%`,
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
         )}
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-ink via-ink/85 to-transparent lg:inset-y-0 lg:right-auto lg:h-auto lg:w-[55%] lg:bg-gradient-to-r lg:via-ink/50"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[50%] bg-gradient-to-t from-paper via-paper/90 to-transparent lg:hidden"
         />
 
         <div className="container-edge relative flex flex-1 flex-col justify-end pt-32 pb-8 lg:pb-[11vh]">
-          <p className="text-label flex items-center gap-4 text-ash">
+          <p className="text-label flex items-center gap-4 text-muted">
             <span aria-hidden className="h-px w-10 bg-olive" />
             {site.company.displayName}
           </p>
           <h1
             id="hero-heading"
-            className="mt-5 text-[clamp(2.7rem,11.5vw,5.2rem)] leading-[0.88] tracking-[-0.045em] text-bone lg:mt-8 lg:text-[clamp(4.5rem,6.6vw,8.6rem)]"
+            className="mt-5 text-[clamp(2.7rem,11.5vw,5.2rem)] leading-[0.88] tracking-[-0.045em] text-fg lg:mt-8 lg:text-[clamp(4.5rem,6.6vw,8.6rem)]"
           >
             <span className="wdth-wide block font-[720]">{copy.hero.headline[0]}</span>
-            <span className="block pl-[0.06em] font-serif font-normal italic tracking-[-0.025em] text-bone lg:pl-[1.1em]">
+            <span className="text-gradient block w-fit pr-[0.1em] pl-[0.06em] font-serif font-normal italic tracking-[-0.025em] lg:pl-[1.1em]">
               {copy.hero.headline[1]}
             </span>
           </h1>
-          <p className="mt-5 max-w-[30rem] text-[0.95rem] leading-relaxed text-ash sm:text-lg lg:mt-10 lg:ml-[clamp(5rem,7.3vw,9.5rem)] lg:text-[clamp(1rem,1.15vw,1.2rem)]">
+          <p className="mt-5 max-w-[30rem] text-[0.95rem] leading-relaxed text-muted sm:text-lg lg:mt-10 lg:ml-[clamp(5rem,7.3vw,9.5rem)] lg:text-[clamp(1rem,1.15vw,1.2rem)]">
             {copy.hero.description}
           </p>
         </div>
 
         <div className="container-edge relative pb-6 lg:pb-7">
-          <div className="flex items-center justify-between border-t border-line pt-4 text-ash lg:pt-5">
+          <div className="flex items-center justify-between border-t border-line pt-4 text-muted lg:pt-5">
             <div className="flex items-center gap-4">
               <span aria-hidden className="relative block h-9 w-px overflow-hidden bg-line">
-                <span className="scroll-cue-line absolute inset-0 bg-bone" />
+                <span className="scroll-cue-line absolute inset-0 bg-fg" />
               </span>
               <span className="text-label">Scroll</span>
             </div>
             {animated && (
-              <span aria-hidden className="text-label tabular-nums">
-                <span ref={counterRef} className="text-bone">
-                  01
+              <span aria-hidden className="text-label flex items-center gap-5 tabular-nums">
+                {hasCaptions && (
+                  <span className="relative block h-[1em] min-w-[9ch] text-right text-fg">
+                    {frames.map((frame, i) => (
+                      <span
+                        key={frame.src}
+                        ref={(el) => {
+                          captionRefs.current[i] = el;
+                        }}
+                        className="absolute top-0 right-0 whitespace-nowrap will-change-transform"
+                        style={{ opacity: i === 0 ? 1 : 0 }}
+                      >
+                        {frame.caption}
+                      </span>
+                    ))}
+                  </span>
+                )}
+                {hasCaptions && <span className="h-px w-8 bg-gradient-to-r from-olive to-cyan" />}
+                <span>
+                  <span ref={counterRef} className="text-fg">
+                    01
+                  </span>
+                  <span className="mx-2 text-muted/60">/</span>
+                  {String(frames.length).padStart(2, "0")}
                 </span>
-                <span className="mx-2 text-ash/60">/</span>
-                {String(frames.length).padStart(2, "0")}
               </span>
             )}
           </div>
           {animated && (
             <div aria-hidden className="relative mt-3 h-px bg-line motion-reduce:hidden">
-              <span ref={barRef} className="absolute inset-0 origin-left scale-x-0 bg-olive" />
+              <span
+                ref={barRef}
+                className="absolute inset-0 origin-left scale-x-0 bg-gradient-to-r from-olive to-cyan"
+              />
             </div>
           )}
         </div>

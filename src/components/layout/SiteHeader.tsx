@@ -91,15 +91,15 @@ export function SiteHeader({ logo }: Props) {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-500 ${
         open
-          ? "border-b border-line bg-ink"
+          ? "border-b border-line bg-paper"
           : scrolled
-            ? "border-b border-line bg-ink/85 backdrop-blur-md"
+            ? "border-b border-line bg-paper/85 backdrop-blur-md"
             : "border-b border-transparent bg-transparent"
       }`}
     >
       <a
         href="#main"
-        className="text-label absolute left-4 top-3 -translate-y-24 bg-bone px-3 py-2 text-ink focus-visible:translate-y-0"
+        className="text-label absolute left-4 top-3 -translate-y-24 bg-fg px-3 py-2 text-paper focus-visible:translate-y-0"
       >
         Skip to content
       </a>
@@ -123,7 +123,7 @@ export function SiteHeader({ logo }: Props) {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={`text-label group relative inline-block py-2 transition-colors duration-300 ${
-                      active ? "text-bone" : "text-ash hover:text-bone"
+                      active ? "text-fg" : "text-muted hover:text-fg"
                     }`}
                   >
                     {item.label}
@@ -140,7 +140,7 @@ export function SiteHeader({ logo }: Props) {
             <li>
               <a
                 href="#contact"
-                className="text-label group inline-flex items-center gap-3 border border-line-strong px-4 py-3 text-bone transition-colors duration-300 hover:border-cyan"
+                className="text-label group inline-flex items-center gap-3 border border-line-strong px-4 py-3 text-fg transition-colors duration-300 hover:border-cyan"
               >
                 Get in touch
                 <span
@@ -155,7 +155,7 @@ export function SiteHeader({ logo }: Props) {
         <button
           ref={toggleRef}
           type="button"
-          className="text-label relative z-10 -mr-2 inline-flex items-center gap-3 p-2 text-bone md:hidden"
+          className="text-label relative z-10 -mr-2 inline-flex items-center gap-3 p-2 text-fg md:hidden"
           aria-expanded={open}
           aria-controls={menuId}
           onClick={() => setOpen((v) => !v)}
@@ -163,12 +163,12 @@ export function SiteHeader({ logo }: Props) {
           <span>{open ? "Close" : "Menu"}</span>
           <span aria-hidden className="relative block h-3 w-6">
             <span
-              className={`absolute left-0 top-0 h-px w-full bg-bone transition-transform duration-500 ease-out-expo ${
+              className={`absolute left-0 top-0 h-px w-full bg-fg transition-transform duration-500 ease-out-expo ${
                 open ? "translate-y-1.5 rotate-45" : ""
               }`}
             />
             <span
-              className={`absolute bottom-0 left-0 h-px bg-bone transition-all duration-500 ease-out-expo ${
+              className={`absolute bottom-0 left-0 h-px bg-fg transition-all duration-500 ease-out-expo ${
                 open ? "w-full -translate-y-[5px] -rotate-45" : "w-2/3"
               }`}
             />
@@ -180,7 +180,7 @@ export function SiteHeader({ logo }: Props) {
         id={menuId}
         ref={panelRef}
         hidden={!open}
-        className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto border-t border-line bg-ink md:hidden"
+        className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto border-t border-line bg-paper md:hidden"
       >
         <nav aria-label="Mobile" className="container-edge flex min-h-full flex-col pb-10 pt-8">
           <ul className="flex flex-col">
@@ -196,12 +196,12 @@ export function SiteHeader({ logo }: Props) {
                   >
                     <span
                       className={`wdth-wide text-[2.75rem] font-[650] leading-none tracking-[-0.04em] ${
-                        active ? "text-bone" : "text-bone/70"
+                        active ? "text-fg" : "text-fg/70"
                       }`}
                     >
                       {item.label}
                     </span>
-                    <span className="text-label text-ash">
+                    <span className="text-label text-muted">
                       {active ? "Current" : `0${i + 1}`}
                     </span>
                   </Link>
@@ -212,7 +212,7 @@ export function SiteHeader({ logo }: Props) {
           <a
             href="#contact"
             onClick={() => setOpen(false)}
-            className="text-label mt-auto inline-flex items-center justify-between border border-line-strong px-5 py-5 text-bone"
+            className="text-label mt-auto inline-flex items-center justify-between border border-line-strong px-5 py-5 text-fg"
           >
             Get in touch
             <span aria-hidden className="h-px w-10 bg-olive" />

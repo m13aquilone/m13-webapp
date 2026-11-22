@@ -1,26 +1,236 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Colour tokens are named by role, not by shade:
+ *   paper      page background (soft off-white, easier on the eyes than #fff)
+ *   surface    raised panels and cards
+ *   surface-2  image wells and placeholders
+ *   fg         primary text and strokes
+ *   muted      secondary text
+ *   line       hairline borders
+ *   olive      military green (brand)
+ *   cyan       decorative cyan (lines, glows); cyan-deep is the readable text variant
+ * `.theme-olive` re-maps the same tokens for military-green bands (footer, Mission).
+ */
+@theme {
+  --color-paper: #f6f5f0;
+  --color-surface: #efeee7;
+  --color-surface-2: #e6e5dc;
+  --color-fg: #141613;
+  --color-muted: #5b6058;
+  --color-line: rgb(20 22 19 / 0.12);
+  --color-line-strong: rgb(20 22 19 / 0.26);
+  --color-olive: #4b5320;
+  --color-olive-soft: #e3e6d2;
+  --color-cyan: #00c2d1;
+  --color-cyan-deep: #00808a;
+  --color-azure: #246bfd;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    background: var(--color-paper);
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-paper);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "kern";
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-olive);
+    color: var(--color-paper);
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-cyan-deep);
+    outline-offset: 4px;
+    border-radius: 1px;
+  }
+
+  img {
+    max-width: 100%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .theme-olive {
+    --color-paper: #4b5320;
+    --color-surface: #555d29;
+    --color-surface-2: #5e6732;
+    --color-fg: #f4f4ef;
+    --color-muted: rgb(244 244 239 / 0.72);
+    --color-line: rgb(244 244 239 / 0.18);
+    --color-line-strong: rgb(244 244 239 / 0.34);
+    --color-olive: #b9c27a;
+    --color-cyan-deep: #5ce8f2;
+    color: var(--color-fg);
+  }
+
+  /* Tinted section washes that settle into the paper colour at the bottom. */
+  .wash-cyan {
+    background-color: var(--color-paper);
+    background-image:
+      radial-gradient(70% 60% at 85% 0%, color-mix(in srgb, var(--color-cyan) 20%, #fff), transparent 70%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-cyan) 9%, #fff), var(--color-paper) 85%);
+  }
+  .wash-olive {
+    background-color: var(--color-paper);
+    background-image:
+      radial-gradient(70% 60% at 15% 0%, color-mix(in srgb, var(--color-olive) 20%, #fff), transparent 70%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-olive) 9%, #fff), var(--color-paper) 85%);
+  }
+  .text-gradient {
+    background-image: linear-gradient(100deg, var(--color-olive), var(--color-cyan-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Archivo width axis: 62 (condensed) to 125 (expanded). */
+  .wdth-expanded {
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+  }
+  .wdth-wide {
+    font-stretch: 112%;
+    font-variation-settings: "wdth" 112;
+  }
+  .wdth-condensed {
+    font-stretch: 75%;
+    font-variation-settings: "wdth" 75;
+  }
+
+  .text-display {
+    font-size: clamp(3.25rem, 10.5vw, 11.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+  }
+
+  .text-headline {
+    font-size: clamp(2.5rem, 7vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  .text-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--color-fg);
+  }
+
+  .container-edge {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3.5rem);
+    max-width: 1680px;
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+.scroll-cue-line {
+  animation: scroll-cue 2.6s var(--ease-out-expo) infinite;
+}
+
+/* Partner logo marquee: the track holds two identical halves and shifts by exactly one half. */
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee {
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
+}
+
+/* Entrance reveals: pure CSS, scroll-driven. Unsupported browsers just show content. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

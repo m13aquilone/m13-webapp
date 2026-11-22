@@ -1,37 +1,38 @@
 /**
- * Prepares supplied logos (and trims transparent portrait cut-outs) for the
- * black site background.
+ * Prepares supplied logos for the light site background.
  *
  *   node scripts/prepare-logos.mjs
  *
  * For each entry below it removes a solid white or dark background
- * (colour-to-alpha, so anti-aliased edges stay smooth), optionally turns
- * neutral black/dark-brown ink into the site's off-white (#F4F4EF) while
- * keeping coloured accents untouched, trims empty margins, and writes a PNG
- * to a `web/` folder next to the original. Originals are never modified.
+ * (colour-to-alpha, so anti-aliased edges stay smooth), optionally recolours
+ * neutral (grey/white/black) ink while keeping coloured accents untouched,
+ * trims empty margins, and writes a PNG to a `light/` folder next to the
+ * original. Originals are never modified.
  */
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..", "public", "assets");
+const INK = [20, 22, 19];
 const BONE = [244, 244, 239];
 
-/** background: "white" | "dark" | "none"; reverse: recolour neutral dark ink to off-white. */
+/**
+ * background: "white" | "dark" | "none".
+ * recolor: "dark" turns light neutral ink (white lettering) into the site's near-black;
+ *          "light" turns dark neutral ink into off-white (for dark backgrounds).
+ */
 const JOBS = [
-  { file: "brand/m13aquilone.png", background: "white", reverse: true },
-  { file: "brand/haffee.png", background: "white", reverse: true },
-  { file: "brand/aquilone.png", background: "white", reverse: true },
-  { file: "partners/cult.webp", background: "none", reverse: false },
-  { file: "partners/essenso.webp", background: "dark", reverse: false },
-  { file: "partners/hammer-strength-logo-png_seeklogo-305649.png", background: "white", reverse: true },
-  { file: "partners/life.jpeg", background: "white", reverse: false },
-  { file: "visionaries/SACHULEKHA-M-S.png", background: "none", reverse: false },
-  { file: "visionaries/LEKSHMY-MOHAN-S.png", background: "none", reverse: false },
-  { file: "visionaries/HARIKRISHNAN-V.png", background: "none", reverse: false },
+  { file: "brand/m13aquilone.png", background: "white" },
+  { file: "brand/haffee.png", background: "white" },
+  { file: "brand/aquilone.png", background: "white" },
+  { file: "partners/cult.webp", background: "none", recolor: "dark" },
+  { file: "partners/essenso.webp", background: "dark", recolor: "dark" },
+  { file: "partners/hammer-strength-logo-png_seeklogo-305649.png", background: "white" },
+  { file: "partners/life.jpeg", background: "white" },
 ];
 
-async function processLogo({ file, background, reverse }) {
+async function processLogo({ file, background, recolor }) {
   const src = path.join(ROOT, file);
   if (!fs.existsSync(src)) {
     console.warn(`skip (missing): ${file}`);
@@ -75,10 +76,11 @@ async function processLogo({ file, background, reverse }) {
       }
     }
 
-    if (reverse && a > 0) {
+    if (recolor && a > 0) {
       const max = Math.max(r, g, b);
       const min = Math.min(r, g, b);
-      if (max - min < 48 && max < 150) [r, g, b] = BONE;
+      if (recolor === "light" && max - min < 48 && max < 150) [r, g, b] = BONE;
+      if (recolor === "dark" && max - min < 40 && min > 110) [r, g, b] = INK;
     }
 
     px[o] = r;
@@ -106,7 +108,7 @@ async function processLogo({ file, background, reverse }) {
   const cropW = Math.min(width - left, maxX - minX + 1 + pad * 2);
   const cropH = Math.min(height - top, maxY - minY + 1 + pad * 2);
 
-  const outDir = path.join(path.dirname(src), "web");
+  const outDir = path.join(path.dirname(src), "light");
   fs.mkdirSync(outDir, { recursive: true });
   const outFile = path.join(outDir, `${path.parse(file).name}.png`);
   const result = await sharp(Buffer.from(px.buffer, px.byteOffset, px.length), { raw: { width, height, channels: 4 } })

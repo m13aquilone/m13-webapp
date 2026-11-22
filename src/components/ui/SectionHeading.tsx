@@ -9,10 +9,10 @@ type Props = {
 export function SectionHeading({ id, children, aside, className = "" }: Props) {
   return (
     <div data-reveal className={`flex items-end justify-between gap-6 ${className}`}>
-      <h2 id={id} className="wdth-wide text-headline font-[680] text-bone">
+      <h2 id={id} className="wdth-wide text-headline font-[680] text-fg">
         {children}
       </h2>
-      {aside && <span className="text-label shrink-0 pb-2 text-ash">{aside}</span>}
+      {aside && <span className="text-label shrink-0 pb-2 text-muted">{aside}</span>}
     </div>
   );
 }

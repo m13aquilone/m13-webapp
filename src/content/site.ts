@@ -72,7 +72,8 @@ export type SiteConfig = {
    * Hero scroll sequence, in order. Each image should sit on a pure black
    * background; it breaks into particles that re-form as the next image.
    */
-  heroFrames: (ImageAsset & { alt: string })[];
+  /** `caption` is shown in the hero's bottom rail, next to the step counter, while its image is on screen. */
+  heroFrames: (ImageAsset & { alt: string; caption?: string })[];
   /**
    * "liquid": the image ripples and melts into the next through flowing noise (WebGL;
    * falls back to a crossfade). "prism": the image is cut into vertical slats that turn in 3D to reveal the next
@@ -101,21 +102,21 @@ export const site: SiteConfig = {
   logo: undefined,
 
   partners: [
-    { name: "cult.fit", logo: { src: "/assets/partners/web/cult.png", width: 1876, height: 674 } },
-    { name: "Essenso Life", logo: { src: "/assets/partners/web/essenso.png", width: 1916, height: 442 } },
+    { name: "cult.fit", logo: { src: "/assets/partners/light/cult.png", width: 1876, height: 674 } },
+    { name: "Essenso Life", logo: { src: "/assets/partners/light/essenso.png", width: 1916, height: 442 } },
     {
       name: "Hammer Strength",
-      logo: { src: "/assets/partners/web/hammer-strength-logo-png_seeklogo-305649.png", width: 562, height: 229 },
+      logo: { src: "/assets/partners/light/hammer-strength-logo-png_seeklogo-305649.png", width: 562, height: 229 },
     },
-    { name: "Life Fitness", logo: { src: "/assets/partners/web/life.png", width: 1198, height: 251 } },
+    { name: "Life Fitness", logo: { src: "/assets/partners/light/life.png", width: 1198, height: 251 } },
   ],
 
   verticals: [
-    { name: "M13 Gym", logo: { src: "/assets/brand/web/m13aquilone.png", width: 1362, height: 789 } },
-    { name: "Haffee Restocafe", logo: { src: "/assets/brand/web/haffee.png", width: 1037, height: 925 } },
+    { name: "M13 Gym", logo: { src: "/assets/brand/light/m13aquilone.png", width: 1362, height: 789 } },
+    { name: "Haffee Restocafe", logo: { src: "/assets/brand/light/haffee.png", width: 1037, height: 925 } },
     {
       name: "Aquilone Rehab and recovery",
-      logo: { src: "/assets/brand/web/aquilone.png", width: 1174, height: 739 },
+      logo: { src: "/assets/brand/light/aquilone.png", width: 1174, height: 739 },
     },
   ],
 
@@ -140,9 +141,9 @@ export const site: SiteConfig = {
   gallery: [],
 
   heroFrames: [
-    { src: "/assets/hero/gym-rack.webp", width: 1920, height: 1440, alt: "Squat rack, barbell and bench in a dark gym" },
-    { src: "/assets/hero/cafe-bowl.webp", width: 1920, height: 1440, alt: "Colourful vegetable and rice bowl on dark slate" },
-    { src: "/assets/hero/yoga.webp", width: 1920, height: 1440, alt: "Woman holding a side plank yoga pose in low light" },
+    { src: "/assets/hero/gym-cut.webp", width: 1920, height: 1440, alt: "A pair of black dumbbells", caption: "Strength" },
+    { src: "/assets/hero/cafe-cut.webp", width: 1920, height: 1440, alt: "Fresh salad vegetables on a fork", caption: "Nourish" },
+    { src: "/assets/hero/yoga-cut.webp", width: 1920, height: 1440, alt: "Woman meditating in a lotus pose", caption: "Restore" },
   ],
 
   heroTransition: "liquid",

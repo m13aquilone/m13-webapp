@@ -24,7 +24,7 @@ function Mark({ vertical }: { vertical: Vertical }) {
   return (
     <span
       aria-hidden
-      className="wdth-expanded relative text-center uppercase text-[clamp(2.5rem,6vw,5.25rem)] font-[800] leading-[0.85] tracking-[-0.05em] text-bone transition-transform duration-700 ease-out-expo group-hover:-translate-y-1.5 group-hover:scale-[1.06]"
+      className="wdth-expanded relative text-center uppercase text-[clamp(2.5rem,6vw,5.25rem)] font-[800] leading-[0.85] tracking-[-0.05em] text-fg transition-transform duration-700 ease-out-expo group-hover:-translate-y-1.5 group-hover:scale-[1.06]"
     >
       {vertical.name.split(/\s+/).map((word) => (
         <span key={word} className="block">
@@ -38,12 +38,12 @@ function Mark({ vertical }: { vertical: Vertical }) {
 function Card({ vertical, index }: { vertical: Vertical; index: number }) {
   const body = (
     <>
-      <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden border border-line bg-graphite transition-colors duration-500 group-hover:border-line-strong">
+      <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden border border-line bg-surface-2 transition-colors duration-500 group-hover:border-line-strong">
         <div
           aria-hidden
-          className="absolute inset-0 translate-y-1/3 bg-[radial-gradient(90%_70%_at_50%_100%,rgb(75_83_32/0.7),transparent_70%)] opacity-0 transition-[opacity,transform] duration-700 ease-out-expo group-hover:translate-y-0 group-hover:opacity-100"
+          className="absolute inset-0 translate-y-1/3 bg-[radial-gradient(90%_70%_at_50%_100%,rgb(75_83_32/0.22),transparent_70%)] opacity-0 transition-[opacity,transform] duration-700 ease-out-expo group-hover:translate-y-0 group-hover:opacity-100"
         />
-        <span className="text-label absolute top-5 left-5 text-ash">{String(index + 1).padStart(2, "0")}</span>
+        <span className="text-label absolute top-5 left-5 text-muted">{String(index + 1).padStart(2, "0")}</span>
         <Mark vertical={vertical} />
       </div>
       <div className="relative flex items-start justify-between gap-4 pt-5">
@@ -51,9 +51,9 @@ function Card({ vertical, index }: { vertical: Vertical; index: number }) {
           aria-hidden
           className="absolute top-0 left-0 h-px w-full origin-left scale-x-0 bg-cyan transition-transform duration-700 ease-out-expo group-hover:scale-x-100"
         />
-        <h3 className="wdth-wide text-lg font-[650] tracking-[-0.01em] text-bone md:text-xl">{vertical.name}</h3>
+        <h3 className="wdth-wide text-lg font-[650] tracking-[-0.01em] text-fg md:text-xl">{vertical.name}</h3>
         {vertical.href && (
-          <span aria-hidden className="text-ash transition-[color,transform] duration-500 group-hover:translate-x-1 group-hover:text-cyan">
+          <span aria-hidden className="text-muted transition-[color,transform] duration-500 group-hover:translate-x-1 group-hover:text-cyan-deep">
             →
           </span>
         )}
@@ -76,7 +76,7 @@ function Card({ vertical, index }: { vertical: Vertical; index: number }) {
 
 export function Verticals({ verticals }: { verticals: Vertical[] }) {
   return (
-    <section aria-labelledby="verticals-heading" className="py-24 md:py-40">
+    <section aria-labelledby="verticals-heading" className="wash-olive border-t border-line py-24 md:py-40">
       <div className="container-edge">
         <SectionHeading id="verticals-heading" aside={`(${String(verticals.length).padStart(2, "0")})`}>
           Business Verticals

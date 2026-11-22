@@ -14,9 +14,9 @@ function Figure({ image, sizes }: { image: GalleryImage; sizes: string }) {
         alt={image.alt}
         sizes={sizes}
         loading="lazy"
-        className="h-auto w-full bg-graphite"
+        className="h-auto w-full bg-surface-2"
       />
-      {image.caption && <figcaption className="text-label mt-3 text-ash">{image.caption}</figcaption>}
+      {image.caption && <figcaption className="text-label mt-3 text-muted">{image.caption}</figcaption>}
     </figure>
   );
 }
@@ -29,14 +29,14 @@ export function GalleryPreview({ images }: { images: GalleryImage[] }) {
   const right = picks.filter((_, i) => i % 2 === 1);
 
   return (
-    <section aria-labelledby="gallery-preview-heading" className="border-t border-line py-24 md:py-40">
+    <section aria-labelledby="gallery-preview-heading" className="wash-olive border-t border-line py-24 md:py-40">
       <div className="container-edge">
         <SectionHeading
           id="gallery-preview-heading"
           aside={
             <Link
               href="/gallery"
-              className="group inline-flex items-center gap-3 text-bone"
+              className="group inline-flex items-center gap-3 text-fg"
             >
               View gallery
               <span aria-hidden className="h-px w-8 bg-olive transition-all duration-500 ease-out-expo group-hover:w-12 group-hover:bg-cyan" />

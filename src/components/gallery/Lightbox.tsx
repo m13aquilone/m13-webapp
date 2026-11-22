@@ -69,17 +69,17 @@ export function Lightbox({ images, index, onIndexChange, onClose }: Props) {
       aria-modal="true"
       aria-label={`Image viewer, ${counter}`}
       onKeyDown={onKeyDown}
-      className="fixed inset-0 z-[100] flex flex-col bg-ink/[0.97]"
+      className="fixed inset-0 z-[100] flex flex-col bg-paper/[0.97]"
     >
       <div className="container-edge flex h-[4.5rem] shrink-0 items-center justify-between border-b border-line">
-        <p className="text-label text-ash" aria-live="polite">
+        <p className="text-label text-muted" aria-live="polite">
           {counter}
         </p>
         <button
           ref={closeRef}
           type="button"
           onClick={onClose}
-          className="text-label -mr-2 inline-flex items-center gap-3 p-2 text-bone hover:text-cyan"
+          className="text-label -mr-2 inline-flex items-center gap-3 p-2 text-fg hover:text-cyan-deep"
         >
           Close
           <span aria-hidden className="relative block h-3 w-3">
@@ -106,7 +106,7 @@ export function Lightbox({ images, index, onIndexChange, onClose }: Props) {
             className="h-auto max-h-[calc(100dvh-15rem)] w-auto max-w-full object-contain"
           />
           {image.caption && (
-            <figcaption className="mt-4 max-w-2xl text-center text-sm text-ash">{image.caption}</figcaption>
+            <figcaption className="mt-4 max-w-2xl text-center text-sm text-muted">{image.caption}</figcaption>
           )}
         </figure>
       </div>
@@ -116,7 +116,7 @@ export function Lightbox({ images, index, onIndexChange, onClose }: Props) {
           <button
             type="button"
             onClick={prev}
-            className="text-label group inline-flex items-center gap-4 p-2 text-bone hover:text-cyan"
+            className="text-label group inline-flex items-center gap-4 p-2 text-fg hover:text-cyan-deep"
           >
             <span aria-hidden className="h-px w-8 bg-current transition-all group-hover:w-12" />
             Previous
@@ -124,7 +124,7 @@ export function Lightbox({ images, index, onIndexChange, onClose }: Props) {
           <button
             type="button"
             onClick={next}
-            className="text-label group inline-flex items-center gap-4 p-2 text-bone hover:text-cyan"
+            className="text-label group inline-flex items-center gap-4 p-2 text-fg hover:text-cyan-deep"
           >
             Next
             <span aria-hidden className="h-px w-8 bg-current transition-all group-hover:w-12" />
