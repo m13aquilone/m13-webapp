@@ -1,0 +1,177 @@
+/**
+ * Central content and asset configuration for the M13 Aquilone website.
+ *
+ * All image paths are relative to `/public` (e.g. "/assets/partners/acme.svg").
+ * Entries whose files are missing from `/public` are filtered out at render
+ * time, so an unfinished upload never shows a broken image.
+ * See README.md for step-by-step instructions.
+ */
+
+export type ImageAsset = {
+  /** Path inside /public, starting with "/assets/..." */
+  src: string;
+  /** Intrinsic pixel width of the file (used to reserve layout space). */
+  width: number;
+  /** Intrinsic pixel height of the file. */
+  height: number;
+};
+
+export type Partner = {
+  /** Partner's official name. Used as the logo's accessible name. */
+  name: string;
+  logo: ImageAsset;
+  /**
+   * Optical size correction. 1 = default. Use e.g. 0.85 for a dense, heavy
+   * wordmark or 1.2 for a light, compact emblem so the strip feels balanced.
+   */
+  scale?: number;
+};
+
+export type Vertical = {
+  name: string;
+  logo?: ImageAsset;
+  /** Only set when a real destination exists. Rows are not links otherwise. */
+  href?: string;
+};
+
+export type Visionary = {
+  name: string;
+  designation: string;
+  photo?: ImageAsset;
+};
+
+export type GalleryImage = ImageAsset & {
+  /** Describe what the photograph actually shows. Required. */
+  alt: string;
+  /** Optional visible caption. Only rendered when provided. */
+  caption?: string;
+  /** Optional category. Filters appear only when 2+ distinct categories exist. */
+  category?: string;
+};
+
+export type SiteConfig = {
+  company: {
+    name: string;
+    legalName: string;
+    displayName: string;
+    /** Text shown in the header when no `logo` is set. */
+    wordmark: string;
+    address: string[];
+    /** Optional. Leave undefined until a real number is supplied, e.g. "+91 00000 00000". */
+    phone?: string;
+    /** Optional. Leave undefined until a real address is supplied. */
+    email?: string;
+  };
+  /** Main company logo. Leave undefined to use the typographic wordmark. */
+  logo?: ImageAsset & { alt: string };
+  partners: Partner[];
+  verticals: [Vertical, Vertical, Vertical];
+  visionaries: [Visionary, Visionary, Visionary];
+  gallery: GalleryImage[];
+  /**
+   * Hero scroll sequence, in order. Each image should sit on a pure black
+   * background; it breaks into particles that re-form as the next image.
+   */
+  heroFrames: (ImageAsset & { alt: string })[];
+  /**
+   * "liquid": the image ripples and melts into the next through flowing noise (WebGL;
+   * falls back to a crossfade). "prism": the image is cut into vertical slats that turn in 3D to reveal the next
+   * photo (best for full photographs). "particles": the image dissolves into glowing
+   * dust that re-forms as the next one (best for objects on a black background).
+   */
+  heroTransition: "liquid" | "prism" | "particles";
+};
+
+export const site: SiteConfig = {
+  company: {
+    name: "M13 Aquilone",
+    legalName: "M13 AQUILONE PVT LTD",
+    displayName: "M13 Aquilone Pvt Ltd",
+    wordmark: "M13",
+    address: [
+      "TC 44/150",
+      "Gowrishankaram, Vazhuthacaud, Thycaud,",
+      "Thiruvananthapuram, Kerala",
+      "Pin: 695014",
+    ],
+    phone: undefined,
+    email: undefined,
+  },
+
+  logo: undefined,
+
+  partners: [
+    { name: "cult.fit", logo: { src: "/assets/partners/web/cult.png", width: 1876, height: 674 } },
+    { name: "Essenso Life", logo: { src: "/assets/partners/web/essenso.png", width: 1916, height: 442 } },
+    {
+      name: "Hammer Strength",
+      logo: { src: "/assets/partners/web/hammer-strength-logo-png_seeklogo-305649.png", width: 562, height: 229 },
+    },
+    { name: "Life Fitness", logo: { src: "/assets/partners/web/life.png", width: 1198, height: 251 } },
+  ],
+
+  verticals: [
+    { name: "M13 Gym", logo: { src: "/assets/brand/web/m13aquilone.png", width: 1362, height: 789 } },
+    { name: "Haffee Restocafe", logo: { src: "/assets/brand/web/haffee.png", width: 1037, height: 925 } },
+    {
+      name: "Aquilone Rehab and recovery",
+      logo: { src: "/assets/brand/web/aquilone.png", width: 1174, height: 739 },
+    },
+  ],
+
+  visionaries: [
+    {
+      name: "SACHULEKHA M S",
+      designation: "Director",
+      photo: { src: "/assets/visionaries/web/SACHULEKHA-M-S.png", width: 1000, height: 1000 },
+    },
+    {
+      name: "LEKSHMY MOHAN S",
+      designation: "Managing Director",
+      photo: { src: "/assets/visionaries/web/LEKSHMY-MOHAN-S.png", width: 1000, height: 1000 },
+    },
+    {
+      name: "HARIKRISHNAN V",
+      designation: "Executive Director",
+      photo: { src: "/assets/visionaries/web/HARIKRISHNAN-V.png", width: 1000, height: 1000 },
+    },
+  ],
+
+  gallery: [],
+
+  heroFrames: [
+    { src: "/assets/hero/gym-rack.webp", width: 1920, height: 1440, alt: "Squat rack, barbell and bench in a dark gym" },
+    { src: "/assets/hero/cafe-bowl.webp", width: 1920, height: 1440, alt: "Colourful vegetable and rice bowl on dark slate" },
+    { src: "/assets/hero/yoga.webp", width: 1920, height: 1440, alt: "Woman holding a side plank yoga pose in low light" },
+  ],
+
+  heroTransition: "liquid",
+};
+
+export const copy = {
+  hero: {
+    headline: ["Think beyond.", "Rise above."] as const,
+    description:
+      "Walk with M13 Aquilone Pvt Ltd where you experience beyond the possibilities in the world of hospitality and lifestyle.",
+  },
+  about: {
+    intro: [
+      "M13 Aquilone Pvt Ltd is an emerging multibrand enterprise established with a vision to create meaningful and sustainable ideas across diverse industries.",
+      "Driven by innovation, quality and a customer centric approach, the company aims to develop integrated concepts that enhance everyday experiences and long-term value.",
+      "Our journey begins with a vision to build a world that goes beyond conventional boundaries.",
+    ],
+    mission: [
+      "To elevate the standard of healthy living by bringing together world class facilities, exceptional expertise and an uncompromising commitment to excellence.",
+      "We strive to create an environment where physical, mental and social wellbeing become a way of life.",
+    ],
+    vision:
+      "To explore new possibilities, evolve with time and make everyday living the best.",
+    values: "Not just us, always we",
+  },
+} as const;
+
+export const navigation = [
+  { label: "Home", href: "/" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "About", href: "/about" },
+] as const;

@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# M13 Aquilone Pvt Ltd: website
 
-## Getting Started
-
-First, run the development server:
+Next.js 16 (App Router), TypeScript and Tailwind CSS 4.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run lint
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Pages: `/` (Home), `/gallery`, `/about`. The contact footer (`#contact`) appears on every page.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Adding your assets
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All content lives in **`src/content/site.ts`**. Put files under `public/assets/…` and reference them with paths that start with `/assets/…`.
 
-## Learn More
+Every image entry needs its real pixel `width` and `height`, which reserve space and prevent layout shift. Any entry whose file is missing is skipped automatically, so an unfinished upload never shows a broken image or breaks the build.
 
-To learn more about Next.js, take a look at the following resources:
+| What | Folder | Config field | Notes |
+| --- | --- | --- | --- |
+| Company logo | `public/assets/brand/` | `logo` | `{ src, width, height, alt }`. Replaces the text wordmark in the header. |
+| Partner logos | `public/assets/partners/` | `partners` | `{ name, logo: { src, width, height }, scale? }`. `name` is the accessible name. The "Partnering with" section stays hidden while this list is empty. |
+| Business logos | `public/assets/verticals/` | `verticals[n].logo` | Keep the three names as they are. Add `href` only if a real destination exists; rows are not links otherwise. |
+| Visionary photos | `public/assets/visionaries/` | `visionaries[n].photo` | Shown in a square frame. For transparent cut-outs, run `node scripts/prepare-portraits.mjs` to crop the empty margins, then point the config at the result in `web/`. |
+| Gallery images | `public/assets/gallery/` | `gallery` | `{ src, width, height, alt, caption?, category? }`. `alt` must describe the photo. Captions show only if provided. Filters appear only when at least two distinct `category` values exist. The Home preview stays hidden while this list is empty. |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Example:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```ts
+partners: [
+  { name: "Partner Name", logo: { src: "/assets/partners/partner-name.svg", width: 240, height: 80 } },
+  // Use scale to balance optical size, e.g. 0.85 for a heavy wordmark or 1.2 for a small emblem.
+],
+gallery: [
+  { src: "/assets/gallery/lobby-01.jpg", width: 2400, height: 1600, alt: "Reception desk with timber panelling" },
+],
+```
 
-## Deploy on Vercel
+### Phone and email
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Set `company.phone` and `company.email` in `site.ts`. The rows (with working `tel:` and `mailto:` links) appear in the footer only when a value is set.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Hero scroll sequence
+
+`heroFrames` in `site.ts` lists the images, in order, and `heroTransition` picks how one becomes the next as you scroll:
+
+| Value | Effect |
+| --- | --- |
+| `"liquid"` (default) | The photo ripples and melts upward into the next through flowing noise, with slight colour fringing and a thin cyan edge. WebGL shader in `liquid.ts`; falls back to a crossfade without WebGL. |
+| `"prism"` | The photo is cut into vertical slats that turn in 3D, one after another, to reveal the next. CSS 3D only. |
+| `"particles"` | The photo dissolves into glowing dust that swirls and re-forms as the next. Best for objects on a black background (`morph.ts`). |
+
+At rest the hero always shows the normal, sharp image; the effect only runs during transitions, and only while the hero is on screen. Between transitions the image tilts gently with the pointer. With reduced motion, only the first image is shown. Code: `src/components/hero/`.
+
+The originals live in `public/assets/hero/*.jpg`; the site loads 4:3 WebP versions (1920 × 1440, quality 90, light edge vignette) generated from them: `gym-rack.webp`, `cafe-bowl.webp` and `yoga.webp`. The hero is served at quality 90 (`images.qualities` in `next.config.ts`).
+
+When replacing an image, use a new file name: the Next.js image cache keys on the URL.
+
+## Logos
+
+Run `node scripts/prepare-logos.mjs` to make supplied logos work on the black background: it removes white or dark backgrounds, turns black ink off-white, keeps coloured accents and trims margins. Output goes to a `web/` folder beside each original; edit the list at the top of the script for new files.
+
+## Known limitations
+
+- Entrance reveals use CSS scroll-driven animations. Browsers without support show content immediately, without the fade.
