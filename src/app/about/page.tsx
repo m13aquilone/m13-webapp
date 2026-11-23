@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { ValuesStatement } from "@/components/about/ValuesStatement";
 import { copy, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -9,8 +10,6 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   const { intro, mission, vision, values } = copy.about;
-  const valueWords = values.split(" ");
-  const lastWord = valueWords.pop();
 
   return (
     <>
@@ -96,22 +95,7 @@ export default function AboutPage() {
             Values
           </h2>
         </div>
-        <p
-          data-reveal
-          className="wdth-expanded mt-10 px-[clamp(1.25rem,4vw,3.5rem)] text-[clamp(3.4rem,12vw,13.5rem)] font-[800] uppercase leading-[0.86] tracking-[-0.055em] text-fg md:mt-14"
-        >
-          <span className="sr-only">{values}</span>
-          <span aria-hidden className="block">{valueWords.slice(0, 2).join(" ")}</span>
-          <span aria-hidden className="flex flex-wrap items-baseline gap-x-[0.28em]">
-            <span>{valueWords[2]}</span>
-            <span className="font-serif text-[0.66em] font-normal normal-case italic tracking-[-0.02em] text-muted [font-stretch:100%] [font-variation-settings:normal]">
-              {valueWords.slice(3).join(" ")}
-            </span>
-          </span>
-          <span aria-hidden className="block text-right">
-            <span className="text-outline [-webkit-text-stroke-width:clamp(1px,0.18vw,2.5px)]">{lastWord}</span>
-          </span>
-        </p>
+        <ValuesStatement values={values} />
       </section>
     </>
   );

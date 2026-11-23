@@ -1,0 +1,119 @@
+[
+  {
+    "file": "IMG-20261116-WA0041.jpg.jpeg",
+    "src": "/assets/gallery/img-20261116-wa0041.webp",
+    "width": 1920,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img-20261116-wa0041.webp",
+      "width": 750,
+      "height": 1000
+    },
+    "alt": "Bundles of steel reinforcement bars stored under a concrete slab on site",
+    "takenAt": "2026-11-16T00:00:00.000Z"
+  },
+  {
+    "file": "IMG-20261116-WA0042.jpg.jpeg",
+    "src": "/assets/gallery/img-20261116-wa0042.webp",
+    "width": 1920,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img-20261116-wa0042.webp",
+      "width": 750,
+      "height": 1000
+    },
+    "alt": "Workers beside timber formwork and a stack of steel pipes on the construction site",
+    "takenAt": "2026-11-16T00:00:00.000Z"
+  },
+  {
+    "file": "IMG-20261116-WA0043.jpg.jpeg",
+    "src": "/assets/gallery/img-20261116-wa0043.webp",
+    "width": 1920,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img-20261116-wa0043.webp",
+      "width": 750,
+      "height": 1000
+    },
+    "alt": "Steel reinforcement mesh laid across a slab, with palm trees beyond",
+    "takenAt": "2026-11-16T00:00:00.000Z"
+  },
+  {
+    "file": "IMG-20261116-WA0054.jpg.jpeg",
+    "src": "/assets/gallery/img-20261116-wa0054.webp",
+    "width": 1920,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img-20261116-wa0054.webp",
+      "width": 750,
+      "height": 1000
+    },
+    "alt": "Concrete block bases and formwork around rising steel column bars",
+    "takenAt": "2026-11-16T00:00:00.000Z"
+  },
+  {
+    "file": "IMG20261113163517.jpg.jpeg",
+    "src": "/assets/gallery/img20261113163517.webp",
+    "width": 2560,
+    "height": 1440,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img20261113163517.webp",
+      "width": 1000,
+      "height": 563
+    },
+    "alt": "A finished concrete roof slab with column bars standing at dusk",
+    "takenAt": "2026-11-13T16:35:17.000Z"
+  },
+  {
+    "file": "IMG20261007111742.jpg.jpeg",
+    "src": "/assets/gallery/img20261007111742.webp",
+    "width": 1439,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img20261007111742.webp",
+      "width": 562,
+      "height": 1000
+    },
+    "alt": "Excavation and formwork beneath a completed concrete floor",
+    "takenAt": "2026-10-07T11:17:42.000Z"
+  },
+  {
+    "file": "IMG20260925071947.jpg.jpeg",
+    "src": "/assets/gallery/img20260925071947.webp",
+    "width": 1440,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img20260925071947.webp",
+      "width": 563,
+      "height": 1000
+    },
+    "alt": "Reinforcement mesh and a concrete pump pipe laid across the slab",
+    "takenAt": "2026-09-25T07:19:47.000Z"
+  },
+  {
+    "file": "IMG20260925071416.jpg.jpeg",
+    "src": "/assets/gallery/img20260925071416.webp",
+    "width": 1440,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img20260925071416.webp",
+      "width": 563,
+      "height": 1000
+    },
+    "alt": "A group walking the reinforced slab before the concrete pour",
+    "takenAt": "2026-09-25T07:14:16.000Z"
+  },
+  {
+    "file": "IMG_8607.JPG.jpeg",
+    "src": "/assets/gallery/img-8607.webp",
+    "width": 1707,
+    "height": 2560,
+    "thumb": {
+      "src": "/assets/gallery/thumbs/img-8607.webp",
+      "width": 667,
+      "height": 1000
+    },
+    "alt": "People gathered around a foundation pit for a ground-breaking ritual",
+    "takenAt": "2000-01-01T05:35:37.000Z"
+  }
+]

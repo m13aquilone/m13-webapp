@@ -6,14 +6,17 @@
  * For each entry below it removes a solid white or dark background
  * (colour-to-alpha, so anti-aliased edges stay smooth), optionally recolours
  * neutral (grey/white/black) ink while keeping coloured accents untouched,
- * trims empty margins, and writes a PNG to a `light/` folder next to the
- * original. Originals are never modified.
+ * trims empty margins, and writes a WebP (max 1200 px wide) to
+ * `public/assets/<folder>/`. Originals live in `assets-src/` and are never
+ * modified.
  */
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..", "public", "assets");
+const PROJECT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const SRC = path.join(PROJECT, "assets-src");
+const OUT = path.join(PROJECT, "public", "assets");
 const INK = [20, 22, 19];
 const BONE = [244, 244, 239];
 
@@ -33,7 +36,7 @@ const JOBS = [
 ];
 
 async function processLogo({ file, background, recolor }) {
-  const src = path.join(ROOT, file);
+  const src = path.join(SRC, file);
   if (!fs.existsSync(src)) {
     console.warn(`skip (missing): ${file}`);
     return;
@@ -108,14 +111,15 @@ async function processLogo({ file, background, recolor }) {
   const cropW = Math.min(width - left, maxX - minX + 1 + pad * 2);
   const cropH = Math.min(height - top, maxY - minY + 1 + pad * 2);
 
-  const outDir = path.join(path.dirname(src), "light");
+  const outDir = path.join(OUT, path.dirname(file));
   fs.mkdirSync(outDir, { recursive: true });
-  const outFile = path.join(outDir, `${path.parse(file).name}.png`);
+  const outFile = path.join(outDir, `${path.parse(file).name}.webp`);
   const result = await sharp(Buffer.from(px.buffer, px.byteOffset, px.length), { raw: { width, height, channels: 4 } })
     .extract({ left, top, width: cropW, height: cropH })
-    .png({ compressionLevel: 9, palette: false })
+    .resize({ width: 1200, withoutEnlargement: true })
+    .webp({ quality: 90, alphaQuality: 100, effort: 6 })
     .toFile(outFile);
-  console.log(`${path.relative(ROOT, outFile)}  ${result.width}x${result.height}`);
+  console.log(`${path.relative(OUT, outFile)}  ${result.width}x${result.height}`);
 }
 
 for (const job of JOBS) await processLogo(job);

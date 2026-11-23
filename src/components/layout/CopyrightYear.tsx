@@ -1,7 +1,6 @@
-import { cacheLife } from "next/cache";
+"use client";
 
-export async function CopyrightYear() {
-  "use cache";
-  cacheLife("days");
-  return <>{new Date().getFullYear()}</>;
+/** Rendered at build time, then corrected in the browser so the year stays current between deploys. */
+export function CopyrightYear() {
+  return <span suppressHydrationWarning>{new Date().getFullYear()}</span>;
 }

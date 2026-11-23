@@ -4,15 +4,16 @@
  *
  *   node scripts/prepare-portraits.mjs
  *
- * Reads every PNG in public/assets/visionaries and writes the result to
- * public/assets/visionaries/web/. Originals are never modified.
+ * Reads every PNG in assets-src/visionaries and writes a WebP to
+ * public/assets/visionaries/. Originals are never modified.
  */
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
-const DIR = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..", "public", "assets", "visionaries");
-const OUT = path.join(DIR, "web");
+const PROJECT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const DIR = path.join(PROJECT, "assets-src", "visionaries");
+const OUT = path.join(PROJECT, "public", "assets", "visionaries");
 const SIZE = 1000;
 const HEAD_ROOM = 0.04;
 
@@ -45,11 +46,11 @@ for (const file of fs.readdirSync(DIR).filter((f) => f.toLowerCase().endsWith(".
   const left = Math.round(Math.min(Math.max(0, centerX - finalSide / 2), width - finalSide));
   const top = Math.round(Math.min(Math.max(0, maxY + 1 - finalSide), height - finalSide));
 
-  const outFile = path.join(OUT, file);
+  const outFile = path.join(OUT, `${path.parse(file).name}.webp`);
   await sharp(src)
     .extract({ left, top, width: finalSide, height: finalSide })
     .resize(SIZE, SIZE)
-    .png({ compressionLevel: 9 })
+    .webp({ quality: 88, alphaQuality: 100, effort: 6 })
     .toFile(outFile);
   console.log(`${file}: content ${contentW}x${contentH}, crop ${finalSide} at ${left},${top}`);
 }

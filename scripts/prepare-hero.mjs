@@ -1,5 +1,5 @@
 /**
- * Builds the hero frames: crops each source photo to 4:3 at 1920 × 1440 and
+ * Builds the hero frames from `assets-src/hero/`: crops each source photo to 4:3 at 1920 × 1440 and
  * removes its light studio background, so the subject sits directly on the page.
  *
  * The background is found by flood-filling from the image border through light,
@@ -14,6 +14,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import sharp from "sharp";
 
+const SRC = path.join(process.cwd(), "assets-src/hero");
 const DIR = path.join(process.cwd(), "public/assets/hero");
 const W = 1920;
 const H = 1440;
@@ -25,9 +26,9 @@ const JOBS = [
 ];
 
 async function load(job) {
-  if (!job.zipEntry) return sharp(path.join(DIR, job.src));
+  if (!job.zipEntry) return sharp(path.join(SRC, job.src));
   const tmp = mkdtempSync(path.join(tmpdir(), "hero-"));
-  execFileSync("unzip", ["-o", "-q", path.join(DIR, job.src), job.zipEntry, "-d", tmp]);
+  execFileSync("unzip", ["-o", "-q", path.join(SRC, job.src), job.zipEntry, "-d", tmp]);
   const buf = await sharp(path.join(tmp, job.zipEntry)).toBuffer();
   rmSync(tmp, { recursive: true, force: true });
   return sharp(buf);
