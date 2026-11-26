@@ -32,6 +32,7 @@ export type Partner = {
 export type Vertical = {
   name: string;
   logo?: ImageAsset;
+  description?: string;
   /** Only set when a real destination exists. Rows are not links otherwise. */
   href?: string;
 };
@@ -89,7 +90,7 @@ export const site: SiteConfig = {
     name: "M13 Aquilone",
     legalName: "M13 AQUILONE PVT LTD",
     displayName: "M13 Aquilone Pvt Ltd",
-    wordmark: "M13",
+    wordmark: "M13 Aquilone",
     address: [
       "TC 44/150",
       "Gowrishankaram, Vazhuthacaud, Thycaud,",
@@ -113,11 +114,23 @@ export const site: SiteConfig = {
   ],
 
   verticals: [
-    { name: "M13 Gym", logo: { src: "/assets/brand/m13aquilone.webp", width: 1200, height: 695 } },
-    { name: "Haffee Restocafe", logo: { src: "/assets/brand/haffee.webp", width: 1037, height: 925 } },
     {
-      name: "Aquilone Rehab and recovery",
+      name: "M13 Gym",
+      logo: { src: "/assets/brand/m13aquilone.webp", width: 1200, height: 695 },
+      description:
+        "A premium fitness destination dedicated to strength, performance and overall well-being. Combining world-class equipment, expert guidance and thoughtfully designed training spaces to inspire a stronger, healthier lifestyle.",
+    },
+    {
+      name: "Haffee",
+      logo: { src: "/assets/brand/haffee.webp", width: 1037, height: 925 },
+      description:
+        "More than just a café, a space designed for comfort, connection and memorable experiences. Bringing together quality food, refreshing beverages and a welcoming atmosphere for every moment.",
+    },
+    {
+      name: "Aquilone Rehab & Recovery",
       logo: { src: "/assets/brand/aquilone.webp", width: 1174, height: 739 },
+      description:
+        "A specialised centre focused on Sports medicine, wellness, rehabilitation and recovery. Combining professional expertise, modern therapeutic facilities and personalised care to restore movement, improve performance and enhance quality of life.",
     },
   ],
 
@@ -177,6 +190,21 @@ export const copy = {
     vision:
       "To explore new possibilities, evolve with time and make everyday living the best.",
     values: "Not just us, always we",
+    approach: {
+      heading: ["How We Think.", "How We Build"],
+      lead: "At M13 Aquilone, our approach is built on a commitment to excellence, innovation and meaningful growth. We believe every successful venture begins with understanding people and delivering value beyond expectations.",
+      principles: [
+        { title: "Quality Without Compromise", text: "Upholding high standards in every product, service and experience." },
+        { title: "Customer-First Thinking", text: "Understanding people's needs and exceeding their expectations." },
+        { title: "Continuous Innovation", text: "Embracing new ideas, technologies and evolving practices." },
+        { title: "Professional Excellence", text: "Bringing together skilled people, expertise and effective leadership." },
+        { title: "Attention to Detail", text: "Ensuring excellence in every aspect of our operations." },
+        {
+          title: "Long-Term Value Creation",
+          text: "Building sustainable businesses that create lasting value for customers, partners and communities.",
+        },
+      ],
+    },
   },
 } as const;
 

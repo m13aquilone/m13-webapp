@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import type { Partner } from "@/content/site";
+import { VelocityMarquee } from "@/components/ui/VelocityMarquee";
 
 /**
  * Optical balancing: every logo gets roughly the same visual area, so wide
@@ -52,8 +53,7 @@ export function Partners({ partners }: { partners: Partner[] }) {
         <span className="text-label shrink-0 pb-1 text-muted">({String(partners.length).padStart(2, "0")})</span>
       </div>
 
-      <div
-        data-reveal
+      <VelocityMarquee
         className="marquee group relative mt-12 overflow-hidden border-y border-line py-10 md:mt-16 md:py-14"
         style={{ "--marquee-duration": `${half.length * 4}s` } as React.CSSProperties}
       >
@@ -65,7 +65,7 @@ export function Partners({ partners }: { partners: Partner[] }) {
             <Logo key={`b-${i}`} partner={p} decorative />
           ))}
         </ul>
-      </div>
+      </VelocityMarquee>
     </section>
   );
 }

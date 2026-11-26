@@ -26,7 +26,7 @@ export function Wordmark({ logo, className = "" }: Props) {
 
   return (
     <span
-      className={`wdth-expanded inline-block text-[1.5rem] leading-none font-[500] tracking-[-0.02em] text-fg ${className}`}
+      className={`wdth-expanded inline-block whitespace-nowrap text-[1.2rem] leading-none sm:text-[1.5rem] font-[500] tracking-[-0.02em] text-fg ${className}`}
     >
       {site.company.wordmark}
     </span>

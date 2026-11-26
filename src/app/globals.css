@@ -202,6 +202,28 @@
   }
 }
 
+/* Outlined background numerals: a slow float while the outline shifts between green and cyan. */
+@keyframes ghost-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    -webkit-text-stroke-color: var(--color-olive);
+  }
+  33% {
+    transform: translate3d(2.5%, -5%, 0) rotate(-2.5deg);
+  }
+  50% {
+    -webkit-text-stroke-color: var(--color-cyan-deep);
+  }
+  66% {
+    transform: translate3d(-2.5%, 4%, 0) rotate(2deg);
+  }
+}
+.ghost-float {
+  animation: ghost-float 14s ease-in-out infinite;
+  will-change: transform;
+}
+
 /* Lightbox: fade in on open; each image slides in from the direction of travel. */
 @keyframes lightbox-in {
   from {

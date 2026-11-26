@@ -9,14 +9,20 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const { intro, mission, vision, values } = copy.about;
+  const { intro, mission, vision, values, approach } = copy.about;
 
   return (
     <>
       {/* Introduction */}
-      <section aria-labelledby="about-heading" className="wash-cyan pb-24 pt-36 md:pb-40 md:pt-48">
+      <section
+        aria-labelledby="about-heading"
+        className="wash-cyan pb-24 pt-36 md:pb-40 md:pt-48"
+      >
         <div className="container-edge">
-          <p data-reveal className="text-label flex items-center gap-4 text-muted">
+          <p
+            data-reveal
+            className="text-label flex items-center gap-4 text-muted"
+          >
             <span aria-hidden className="h-px w-10 bg-olive" />
             {site.company.displayName}
           </p>
@@ -25,7 +31,10 @@ export default function AboutPage() {
             data-reveal
             className="wdth-expanded text-display mt-8 font-[760] text-fg"
           >
-            About <span className="font-serif font-normal italic tracking-[-0.02em] [font-stretch:100%] [font-variation-settings:normal]">us</span>
+            About{" "}
+            <span className="font-serif font-normal italic tracking-[-0.02em] [font-stretch:100%] [font-variation-settings:normal]">
+              us
+            </span>
           </h1>
 
           <div className="mt-16 grid gap-10 border-t border-line pt-10 md:mt-24 md:grid-cols-12 md:gap-8 md:pt-14">
@@ -44,13 +53,68 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      {/* Approach: heading + lead, then numbered principles */}
+      <section
+        aria-labelledby="approach-heading"
+        className="border-t border-line py-24 md:py-40"
+      >
+        <div className="container-edge">
+          <div className="grid gap-10 md:grid-cols-12 md:gap-8">
+            <h2
+              id="approach-heading"
+              data-reveal
+              className="wdth-wide text-headline font-[680] text-fg md:col-span-7"
+            >
+              {approach.heading[0]}
+              <br />
+              <span className="text-outline">{approach.heading[1]}</span>
+            </h2>
+            <p
+              data-reveal
+              className="max-w-xl text-base leading-relaxed text-muted md:col-span-4 md:col-start-9 md:self-end md:text-lg"
+            >
+              {approach.lead}
+            </p>
+          </div>
+
+          <ol className="mt-16 grid border-t border-line sm:grid-cols-2 md:mt-24 lg:grid-cols-3">
+            {approach.principles.map((principle, i) => (
+              <li
+                key={principle.title}
+                data-reveal
+                className="group border-b border-line py-10 sm:px-6 sm:odd:border-r lg:odd:border-r-0 lg:[&:not(:nth-child(3n))]:border-r md:py-14 lg:px-8 lg:first:pl-0 lg:[&:nth-child(3n+1)]:pl-0 sm:max-lg:odd:pl-0"
+              >
+                <span
+                  aria-hidden
+                  className="text-outline wdth-expanded block text-[clamp(3rem,5vw,4.5rem)] font-[800] leading-none tracking-[-0.04em] transition-[translate] duration-700 ease-smooth group-hover:-translate-y-1"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="wdth-wide mt-8 text-xl font-[650] tracking-[-0.01em] text-fg md:text-2xl">
+                  {principle.title}
+                </h3>
+                <p className="mt-4 max-w-sm text-base leading-relaxed text-muted">
+                  {principle.text}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       {/* Mission: olive surface band, sticky label + large lead */}
-      <section aria-labelledby="mission-heading" className="theme-olive bg-paper">
+      <section
+        aria-labelledby="mission-heading"
+        className="theme-olive bg-paper"
+      >
         <div className="container-edge grid gap-10 py-24 md:grid-cols-12 md:gap-8 md:py-40">
           <div className="md:col-span-3">
             <div className="md:sticky md:top-28">
-              <h2 id="mission-heading" data-reveal className="text-label flex items-center gap-4 text-fg">
+              <h2
+                id="mission-heading"
+                data-reveal
+                className="text-label flex items-center gap-4 text-fg"
+              >
                 <span aria-hidden className="h-px w-10 bg-olive" />
                 Mission
               </h2>
@@ -63,7 +127,10 @@ export default function AboutPage() {
             >
               {mission[0]}
             </p>
-            <p data-reveal className="mt-10 max-w-xl border-l border-olive pl-6 text-lg leading-relaxed text-fg/80 md:mt-14">
+            <p
+              data-reveal
+              className="mt-10 max-w-xl border-l border-olive pl-6 text-lg leading-relaxed text-fg/80 md:mt-14"
+            >
               {mission[1]}
             </p>
           </div>
@@ -71,10 +138,17 @@ export default function AboutPage() {
       </section>
 
       {/* Vision: single centred serif statement between fine rules */}
-      <section aria-labelledby="vision-heading" className="wash-cyan py-24 md:py-40">
+      <section
+        aria-labelledby="vision-heading"
+        className="wash-cyan"
+      >
         <div className="container-edge">
           <div className="border-y border-line py-16 text-center md:py-28">
-            <h2 id="vision-heading" data-reveal className="text-label text-muted">
+            <h2
+              id="vision-heading"
+              data-reveal
+              className="text-label text-muted"
+            >
               Vision
             </h2>
             <p
@@ -88,9 +162,16 @@ export default function AboutPage() {
       </section>
 
       {/* Values: full-bleed typographic statement */}
-      <section aria-labelledby="values-heading" className="wash-olive overflow-hidden border-t border-line pt-24 pb-28 md:pt-40 md:pb-48">
+      <section
+        aria-labelledby="values-heading"
+        className="wash-olive overflow-hidden border-t border-line pt-24 pb-28 md:pt-40 md:pb-48"
+      >
         <div className="container-edge">
-          <h2 id="values-heading" data-reveal className="text-label flex items-center gap-4 text-muted">
+          <h2
+            id="values-heading"
+            data-reveal
+            className="text-label flex items-center gap-4 text-muted"
+          >
             <span aria-hidden className="h-px w-10 bg-olive" />
             Values
           </h2>
