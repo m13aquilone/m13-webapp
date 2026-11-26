@@ -67,6 +67,10 @@ export type SiteConfig = {
     phone?: string;
     /** Optional. Leave undefined until a real address is supplied. */
     email?: string;
+    /** Optional WhatsApp number with country code, e.g. "+91 00000 00000". Defaults to `phone`. Set to `false` to hide. */
+    whatsapp?: string | false;
+    /** Message pre-filled when a visitor opens WhatsApp from the site. */
+    whatsappMessage: string;
   };
   /** Main company logo. Leave undefined to use the typographic wordmark. */
   logo?: ImageAsset & { alt: string };
@@ -102,8 +106,11 @@ export const site: SiteConfig = {
       "Thiruvananthapuram, Kerala",
       "Pin: 695014",
     ],
-    phone: undefined,
-    email: undefined,
+    phone: "+91 70122 81313",
+    email: "m13aquilone@gmail.com",
+    whatsapp: undefined,
+    whatsappMessage:
+      "Hello M13 Aquilone, I came across your website and would like to know more about your services. Could you please share the details? Thank you.",
   },
 
   logo: undefined,

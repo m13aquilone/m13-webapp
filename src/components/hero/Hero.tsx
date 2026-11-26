@@ -14,10 +14,9 @@ const frameSrc = (seq: HeroSequence, i: number) => `${seq.path}/${String(i + 1).
 
 /**
  * Scroll-scrubbed image sequence: the frames play like a video as the hero
- * scrolls. The canvas and poster multiply onto the stage's paper background, so
- * nothing between them and the stage may create a stacking context (transforms,
- * containment, opacity, filters), or the white frame background shows. Frame 1 is a regular image (shown with reduced motion and until the
- * canvas has drawn); the rest load in order in the background.
+ * scrolls. Frame 1 is a regular image, multiplied onto the page so its white
+ * background disappears (shown with reduced motion and until the canvas has
+ * drawn); the rest load in order in the background.
  */
 export function Hero({ sequence }: { sequence?: HeroSequence }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -93,6 +92,7 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let fit = { x: 0, y: 0, w: 0, h: 0 };
+    let paper = "#fff";
     const resize = () => {
       canvas.width = Math.round(frame.offsetWidth * dpr);
       canvas.height = Math.round(frame.offsetHeight * dpr);
@@ -100,11 +100,12 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
       const w = sequence.width * scale;
       const h = sequence.height * scale;
       fit = { x: (canvas.width - w) / 2, y: (canvas.height - h) / 2, w, h };
-      drawn = -1;
+      paper = getComputedStyle(stage).backgroundColor;
+      // Resizing clears the canvas; repaint at once so no blank frame shows.
+      if (drawn !== -1) draw(drawn, performance.now());
     };
 
-    // Idle float and sway, a slight lean toward the pointer, and a small zoom while hovered.
-    // Applied when drawing, so the canvas keeps no CSS transform (that would break the multiply blend).
+    // Idle float and sway, a slight lean toward the pointer, and a small zoom while hovered, applied when drawing.
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     let pointerX = 0;
     let pointerY = 0;
@@ -129,6 +130,28 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
       return -1;
     };
 
+    /**
+     * The canvas is opaque: it paints the page colour and multiplies the frame onto it, so the
+     * frames' white background matches the page without CSS blending (which flickers on mobile).
+     */
+    function draw(index: number, now: number) {
+      const c = ctx!;
+      const time = now / 1000;
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.globalCompositeOperation = "source-over";
+      c.fillStyle = paper;
+      c.fillRect(0, 0, canvas!.width, canvas!.height);
+      c.translate(
+        fit.x + fit.w / 2 + leanX * 0.02 * fit.w,
+        fit.y + fit.h / 2 + leanY * 0.015 * fit.h + Math.sin(time * 1.1) * 0.02 * fit.h * idle,
+      );
+      c.rotate(leanX * 0.02 + Math.sin(time * 0.7) * 0.014 * idle);
+      const scale = REST_SCALE + hover * 0.035;
+      c.scale(scale, scale);
+      c.globalCompositeOperation = "multiply";
+      c.drawImage(images[index], -fit.w / 2, -fit.h / 2, fit.w, fit.h);
+    }
+
     function tick() {
       raf = 0;
       if (!visible) return;
@@ -140,20 +163,9 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
       hover += (hoverTarget - hover) * 0.08;
       const now = performance.now();
       idle += ((now - lastScroll > 200 ? 1 : 0.25) - idle) * 0.04;
-      const time = now / 1000;
       const index = nearestReady(Math.round(progress * last));
       if (index !== -1) {
-        const c = ctx!;
-        c.setTransform(1, 0, 0, 1, 0, 0);
-        c.clearRect(0, 0, canvas!.width, canvas!.height);
-        c.translate(
-          fit.x + fit.w / 2 + leanX * 0.02 * fit.w,
-          fit.y + fit.h / 2 + leanY * 0.015 * fit.h + Math.sin(time * 1.1) * 0.02 * fit.h * idle,
-        );
-        c.rotate(leanX * 0.02 + Math.sin(time * 0.7) * 0.014 * idle);
-        const scale = REST_SCALE + hover * 0.035;
-        c.scale(scale, scale);
-        c.drawImage(images[index], -fit.w / 2, -fit.h / 2, fit.w, fit.h);
+        draw(index, now);
         if (drawn === -1 && posterRef.current) posterRef.current.style.opacity = "0";
         drawn = index;
       }
@@ -194,19 +206,14 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
           animated ? "sticky top-0 h-dvh motion-reduce:relative" : "min-h-dvh"
         }`}
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_42%_at_50%_32%,rgb(75_83_32/0.08),transparent_70%)] lg:bg-[radial-gradient(36%_50%_at_28%_50%,rgb(75_83_32/0.08),transparent_70%)]"
-        />
-
         {sequence && (
           <div
             ref={frameRef}
             role="img"
             aria-label={sequence.alt}
-            className="absolute inset-x-2 top-[11dvh] h-[40dvh] sm:inset-x-[8%] lg:inset-y-[6dvh] lg:right-[50%] lg:left-[1%] lg:h-auto"
+            className="absolute inset-x-2 top-[11svh] h-[40svh] sm:inset-x-[8%] lg:inset-y-[6svh] lg:right-[50%] lg:left-[1%] lg:h-auto"
           >
-            <canvas ref={canvasRef} aria-hidden className="absolute inset-0 h-full w-full mix-blend-multiply" />
+            <canvas ref={canvasRef} aria-hidden className="absolute inset-0 h-full w-full" />
             <Image
               ref={posterRef}
               src={frameSrc(sequence, 0)}
