@@ -109,37 +109,42 @@ export function Verticals({ verticals }: { verticals: Vertical[] }) {
             {verticals.map((v, i) => {
               const [first, ...rest] = v.name.split(/\s+/);
               const body = (
-                <div className="flex items-baseline gap-5 md:gap-8">
-                  <span className="text-label w-8 shrink-0 tabular-nums text-muted transition-colors duration-500 group-data-[active]/row:text-olive">
-                    {pad(i + 1)}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    {v.logo && (
-                      <div className="mb-8 flex h-24 items-center lg:hidden">
-                        <Logo vertical={v} sizes="60vw" />
-                      </div>
-                    )}
-                    <h3 className="text-[clamp(2.2rem,4.6vw,4.4rem)] leading-[0.92] tracking-[-0.045em] text-fg transition-[opacity,translate] duration-700 ease-smooth lg:opacity-25 lg:group-data-[active]/row:translate-x-3 lg:group-data-[active]/row:opacity-100">
-                      <span className="wdth-wide block font-[760]">{first}</span>
-                      {rest.length > 0 && (
-                        <span className="text-outline wdth-wide block font-[800] [-webkit-text-stroke-width:clamp(1px,0.12vw,2px)]">
-                          {rest.join(" ")}
+                <>
+                  {v.logo && (
+                    <div className="mb-10 flex h-28 items-center justify-center lg:hidden">
+                      <Logo vertical={v} sizes="70vw" />
+                    </div>
+                  )}
+                  <div className="flex items-baseline gap-5 md:gap-8">
+                    <span className="text-label w-8 shrink-0 tabular-nums text-muted transition-colors duration-500 group-data-[active]/row:text-olive">
+                      {pad(i + 1)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-[clamp(2.2rem,4.6vw,4.4rem)] leading-[0.92] tracking-[-0.045em] text-fg transition-[opacity,translate] duration-700 ease-smooth lg:opacity-25 lg:group-data-[active]/row:translate-x-3 lg:group-data-[active]/row:opacity-100">
+                        <span className="wdth-wide block font-[760]">{first}</span>
+                        {rest.length > 0 && (
+                          <span className="text-outline wdth-wide block font-[800] [-webkit-text-stroke-width:clamp(1px,0.12vw,2px)]">
+                            {rest.join(" ")}
+                          </span>
+                        )}
+                      </h3>
+                      {v.description && (
+                        <p className="mt-6 max-w-lg text-base leading-relaxed text-muted transition-[opacity,translate] duration-700 ease-smooth md:text-lg lg:translate-y-2 lg:opacity-30 lg:group-data-[active]/row:translate-x-3 lg:group-data-[active]/row:translate-y-0 lg:group-data-[active]/row:opacity-100">
+                          {v.description}
+                        </p>
+                      )}
+                      {v.href && (
+                        <span className="text-label mt-6 inline-flex items-center gap-3 text-fg lg:ml-3">
+                          Explore
+                          <span
+                            aria-hidden
+                            className="h-px w-6 bg-current transition-[width] duration-500 group-hover/row:w-10"
+                          />
                         </span>
                       )}
-                    </h3>
-                    {v.description && (
-                      <p className="mt-6 max-w-lg text-base leading-relaxed text-muted transition-[opacity,translate] duration-700 ease-smooth md:text-lg lg:translate-y-2 lg:opacity-30 lg:group-data-[active]/row:translate-x-3 lg:group-data-[active]/row:translate-y-0 lg:group-data-[active]/row:opacity-100">
-                        {v.description}
-                      </p>
-                    )}
-                    {v.href && (
-                      <span className="text-label mt-6 inline-flex items-center gap-3 text-fg lg:ml-3">
-                        Explore
-                        <span aria-hidden className="h-px w-6 bg-current transition-[width] duration-500 group-hover/row:w-10" />
-                      </span>
-                    )}
+                    </div>
                   </div>
-                </div>
+                </>
               );
               return (
                 <li
