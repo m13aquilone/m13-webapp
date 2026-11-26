@@ -66,7 +66,7 @@ export function Verticals({ verticals }: { verticals: Vertical[] }) {
         </h2>
 
         <div className="mt-14 grid gap-12 md:mt-20 lg:grid-cols-12 lg:gap-8">
-          <div aria-hidden className="hidden lg:sticky lg:top-28 lg:col-span-5 lg:block lg:self-start">
+          <div aria-hidden className="group/stage hidden lg:sticky lg:top-28 lg:col-span-5 lg:block lg:self-start">
             <div className="relative aspect-[4/3] max-h-[52dvh] w-full">
               {verticals.map((v, i) => (
                 <div
@@ -75,7 +75,14 @@ export function Verticals({ verticals }: { verticals: Vertical[] }) {
                     i === active ? "scale-100 opacity-100 blur-0" : "scale-95 opacity-0 blur-sm"
                   }`}
                 >
-                  <Logo vertical={v} sizes="35vw" />
+                  <div className="flex h-full w-full items-center justify-center transition-[scale,rotate] duration-700 ease-smooth group-hover/stage:-rotate-1 group-hover/stage:scale-[1.05]">
+                    <div
+                      className="bob flex h-full w-full items-center justify-center"
+                      style={{ animationDelay: `${i * -2.3}s` }}
+                    >
+                      <Logo vertical={v} sizes="35vw" />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -112,7 +119,12 @@ export function Verticals({ verticals }: { verticals: Vertical[] }) {
                 <>
                   {v.logo && (
                     <div className="mb-10 flex h-28 items-center justify-center lg:hidden">
-                      <Logo vertical={v} sizes="70vw" />
+                      <div
+                        className="bob flex h-full w-full items-center justify-center"
+                        style={{ animationDelay: `${i * -2.3}s` }}
+                      >
+                        <Logo vertical={v} sizes="70vw" />
+                      </div>
                     </div>
                   )}
                   <div className="flex items-baseline gap-5 md:gap-8">

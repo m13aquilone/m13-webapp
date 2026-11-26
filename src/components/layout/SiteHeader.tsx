@@ -31,10 +31,23 @@ export function SiteHeader({ logo }: Props) {
   }
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
+    // `data-scrolling` on <html> while the page moves; idle float effects pause on it.
+    const root = document.documentElement;
+    let idle = 0;
+    const update = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      update();
+      root.dataset.scrolling = "";
+      window.clearTimeout(idle);
+      idle = window.setTimeout(() => delete root.dataset.scrolling, 200);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(idle);
+      delete root.dataset.scrolling;
+    };
   }, []);
 
   const close = useCallback((restoreFocus = true) => {
@@ -49,10 +62,7 @@ export function SiteHeader({ logo }: Props) {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    const focusables = () =>
-      Array.from(
-        panel?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? [],
-      );
+    const focusables = () => Array.from(panel?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") ?? []);
     focusables()[0]?.focus();
 
     const onKey = (event: KeyboardEvent) => {
@@ -105,11 +115,7 @@ export function SiteHeader({ logo }: Props) {
       </a>
 
       <div className="container-edge flex h-[4.5rem] items-center justify-between">
-        <Link
-          href="/"
-          className="relative z-10 -m-2 p-2"
-          aria-label={logo ? undefined : "M13 Aquilone, home"}
-        >
+        <Link href="/" className="relative z-10 -m-2 p-2" aria-label={logo ? undefined : "M13 Aquilone, home"}>
           <Wordmark logo={logo} />
         </Link>
 
@@ -201,9 +207,7 @@ export function SiteHeader({ logo }: Props) {
                     >
                       {item.label}
                     </span>
-                    <span className="text-label text-muted">
-                      {active ? "Current" : `0${i + 1}`}
-                    </span>
+                    <span className="text-label text-muted">{active ? "Current" : `0${i + 1}`}</span>
                   </Link>
                 </li>
               );

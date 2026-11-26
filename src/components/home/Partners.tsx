@@ -19,20 +19,22 @@ function logoSize(partner: Partner) {
   return { height, width: Math.round(height * aspect) };
 }
 
-function Logo({ partner, decorative }: { partner: Partner; decorative?: boolean }) {
+function Logo({ partner, decorative, index }: { partner: Partner; decorative?: boolean; index: number }) {
   const { width, height } = logoSize(partner);
   return (
     <li className="marquee-item flex shrink-0 items-center px-8 md:px-12" aria-hidden={decorative || undefined}>
-      <Image
-        src={partner.logo.src}
-        width={width}
-        height={height}
-        alt={decorative ? "" : partner.name}
-        loading="lazy"
-        sizes={`${width}px`}
-        className="max-w-none object-contain opacity-70 transition-[opacity,transform] duration-500 ease-out-expo hover:scale-105 hover:opacity-100"
-        style={{ width, height: "auto", maxHeight: height }}
-      />
+      <span className="bob block" style={{ animationDelay: `${index * -1.3}s` }}>
+        <Image
+          src={partner.logo.src}
+          width={width}
+          height={height}
+          alt={decorative ? "" : partner.name}
+          loading="lazy"
+          sizes={`${width}px`}
+          className="max-w-none object-contain opacity-70 transition-[opacity,scale,rotate,translate] duration-500 ease-out-expo hover:-translate-y-1 hover:-rotate-2 hover:scale-110 hover:opacity-100"
+          style={{ width, height: "auto", maxHeight: height }}
+        />
+      </span>
     </li>
   );
 }
@@ -47,7 +49,10 @@ export function Partners({ partners }: { partners: Partner[] }) {
   return (
     <section aria-labelledby="partners-heading" className="border-t border-line pt-16 pb-20 md:pt-24 md:pb-28">
       <div data-reveal className="container-edge flex items-end justify-between gap-6">
-        <h2 id="partners-heading" className="wdth-wide text-[clamp(1.75rem,3.6vw,3.25rem)] font-[680] leading-none tracking-[-0.035em] text-fg">
+        <h2
+          id="partners-heading"
+          className="wdth-wide text-[clamp(1.75rem,3.6vw,3.25rem)] font-[680] leading-none tracking-[-0.035em] text-fg"
+        >
           Partnering with
         </h2>
         <span className="text-label shrink-0 pb-1 text-muted">({String(partners.length).padStart(2, "0")})</span>
@@ -59,10 +64,10 @@ export function Partners({ partners }: { partners: Partner[] }) {
       >
         <ul className="marquee-track flex w-max items-center">
           {half.map((p, i) => (
-            <Logo key={`a-${i}`} partner={p} decorative={i >= partners.length} />
+            <Logo key={`a-${i}`} partner={p} index={i} decorative={i >= partners.length} />
           ))}
           {half.map((p, i) => (
-            <Logo key={`b-${i}`} partner={p} decorative />
+            <Logo key={`b-${i}`} partner={p} index={i} decorative />
           ))}
         </ul>
       </VelocityMarquee>

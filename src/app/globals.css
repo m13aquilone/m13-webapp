@@ -224,6 +224,30 @@
   will-change: transform;
 }
 
+/* Idle float for logos, paused while the page scrolls. Uses the individual translate/rotate properties so hover scale utilities still compose. */
+@keyframes bob {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  50% {
+    translate: 0 -10px;
+    rotate: -1.2deg;
+  }
+}
+.bob {
+  animation: bob 6s ease-in-out infinite;
+}
+:root[data-scrolling] .bob {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bob {
+    animation: none;
+  }
+}
+
 /* Lightbox: fade in on open; each image slides in from the direction of travel. */
 @keyframes lightbox-in {
   from {

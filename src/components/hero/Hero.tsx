@@ -7,6 +7,9 @@ import { useEffect, useRef } from "react";
 
 import { copy, site, type HeroSequence } from "@/content/site";
 
+/** Frames are drawn slightly inset so the float, lean and hover zoom never clip. */
+const REST_SCALE = 0.94;
+
 const frameSrc = (seq: HeroSequence, i: number) => `${seq.path}/${String(i + 1).padStart(3, "0")}.webp`;
 
 /**
@@ -41,15 +44,25 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
     const hold = Math.min(last, Math.max(0, (sequence.releaseAt ?? sequence.count) - 1)) / last;
     let target = 0;
     let progress = 0;
-    // Pinned part of the scroll plays frames up to releaseAt; the rest play while the hero scrolls away.
-    const trigger = ScrollTrigger.create({
+    let lastScroll = 0;
+    // While pinned, frames play up to releaseAt; the rest play while the hero scrolls away.
+    const pinned = ScrollTrigger.create({
       trigger: section,
       start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        if (self.progress < 1) target = self.progress * hold;
+        lastScroll = performance.now();
+      },
+    });
+    const leaving = ScrollTrigger.create({
+      trigger: section,
+      start: "bottom bottom",
       end: "bottom top",
       onUpdate: (self) => {
-        const pinned = (section.offsetHeight - stage.offsetHeight) / section.offsetHeight;
-        const p = self.progress;
-        target = p <= pinned ? (p / pinned) * hold : hold + ((p - pinned) / (1 - pinned)) * (1 - hold);
+        if (self.progress > 0) target = hold + self.progress * (1 - hold);
+        else target = Math.min(target, hold);
+        lastScroll = performance.now();
       },
     });
 
@@ -90,6 +103,24 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
       drawn = -1;
     };
 
+    // Idle float and sway, a slight lean toward the pointer, and a small zoom while hovered.
+    // Applied when drawing, so the canvas keeps no CSS transform (that would break the multiply blend).
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    let pointerX = 0;
+    let pointerY = 0;
+    let hoverTarget = 0;
+    let leanX = 0;
+    let leanY = 0;
+    let hover = 0;
+    let idle = 1;
+    const onPointer = (e: PointerEvent) => {
+      const r = frame.getBoundingClientRect();
+      pointerX = Math.max(-1, Math.min(1, ((e.clientX - (r.left + r.width / 2)) / window.innerWidth) * 2));
+      pointerY = Math.max(-1, Math.min(1, ((e.clientY - (r.top + r.height / 2)) / window.innerHeight) * 2));
+      hoverTarget = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom ? 1 : 0;
+    };
+    if (finePointer) window.addEventListener("pointermove", onPointer, { passive: true });
+
     const nearestReady = (i: number) => {
       for (let d = 0; d <= last; d++) {
         if (i - d >= 0 && ready[i - d]) return i - d;
@@ -104,10 +135,25 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
       progress += (target - progress) * 0.14;
       if (Math.abs(target - progress) < 0.0005) progress = target;
 
+      leanX += (pointerX - leanX) * 0.06;
+      leanY += (pointerY - leanY) * 0.06;
+      hover += (hoverTarget - hover) * 0.08;
+      const now = performance.now();
+      idle += ((now - lastScroll > 200 ? 1 : 0.25) - idle) * 0.04;
+      const time = now / 1000;
       const index = nearestReady(Math.round(progress * last));
-      if (index !== -1 && index !== drawn) {
-        ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
-        ctx!.drawImage(images[index], fit.x, fit.y, fit.w, fit.h);
+      if (index !== -1) {
+        const c = ctx!;
+        c.setTransform(1, 0, 0, 1, 0, 0);
+        c.clearRect(0, 0, canvas!.width, canvas!.height);
+        c.translate(
+          fit.x + fit.w / 2 + leanX * 0.02 * fit.w,
+          fit.y + fit.h / 2 + leanY * 0.015 * fit.h + Math.sin(time * 1.1) * 0.02 * fit.h * idle,
+        );
+        c.rotate(leanX * 0.02 + Math.sin(time * 0.7) * 0.014 * idle);
+        const scale = REST_SCALE + hover * 0.035;
+        c.scale(scale, scale);
+        c.drawImage(images[index], -fit.w / 2, -fit.h / 2, fit.w, fit.h);
         if (drawn === -1 && posterRef.current) posterRef.current.style.opacity = "0";
         drawn = index;
       }
@@ -128,9 +174,11 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
-      trigger.kill();
+      pinned.kill();
+      leaving.kill();
       ro.disconnect();
       io.disconnect();
+      window.removeEventListener("pointermove", onPointer);
     };
   }, [animated, sequence]);
 
@@ -166,7 +214,7 @@ export function Hero({ sequence }: { sequence?: HeroSequence }) {
               fill
               sizes="(min-width: 1024px) 62vw, 95vw"
               preload
-              className="object-contain mix-blend-multiply"
+              className="scale-[0.94] object-contain mix-blend-multiply"
             />
           </div>
         )}
