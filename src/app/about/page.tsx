@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { ValuesStatement } from "@/components/about/ValuesStatement";
+import { InkText } from "@/components/ui/InkText";
+import { Parallax } from "@/components/ui/Parallax";
 import { copy, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -12,13 +14,24 @@ export default function AboutPage() {
   const { intro, mission, vision, values, approach } = copy.about;
 
   return (
-    <>
+    <Parallax>
       {/* Introduction */}
       <section
         aria-labelledby="about-heading"
-        className="wash-cyan pb-24 pt-36 md:pb-40 md:pt-48"
+        data-parallax-row
+        className="wash-cyan relative overflow-hidden pb-24 pt-36 md:pb-40 md:pt-48"
       >
-        <div className="container-edge">
+        <span
+          aria-hidden
+          data-speed="0.35"
+          data-drift="0.04"
+          className="pointer-events-none absolute -right-[4vw] top-[14%] select-none"
+        >
+          <span className="ghost-float text-outline wdth-expanded block text-[clamp(10rem,30vw,30rem)] font-[800] leading-none tracking-[-0.06em] opacity-[0.18]">
+            M13
+          </span>
+        </span>
+        <div className="container-edge relative">
           <p
             data-reveal
             className="text-label flex items-center gap-4 text-muted"
@@ -28,22 +41,28 @@ export default function AboutPage() {
           </p>
           <h1
             id="about-heading"
-            data-reveal
-            className="wdth-expanded text-display mt-8 font-[760] text-fg"
+            className="wdth-expanded text-display mt-8 flex flex-wrap gap-x-[0.25em] font-[760] text-fg"
           >
-            About{" "}
-            <span className="font-serif font-normal italic tracking-[-0.02em] [font-stretch:100%] [font-variation-settings:normal]">
-              us
+            <span className="block overflow-hidden pb-[0.08em]">
+              <span data-rise className="block">
+                About
+              </span>
+            </span>
+            <span className="block overflow-hidden pb-[0.08em]">
+              <span
+                data-rise="0.12"
+                className="block font-serif font-normal italic tracking-[-0.02em] [font-stretch:100%] [font-variation-settings:normal]"
+              >
+                us
+              </span>
             </span>
           </h1>
 
           <div className="mt-16 grid gap-10 border-t border-line pt-10 md:mt-24 md:grid-cols-12 md:gap-8 md:pt-14">
-            <p
-              data-reveal
+            <InkText
+              text={intro[0]}
               className="text-[clamp(1.375rem,2.4vw,2.25rem)] font-[420] leading-[1.25] tracking-[-0.015em] text-fg md:col-span-6"
-            >
-              {intro[0]}
-            </p>
+            />
             <div className="space-y-6 text-base leading-relaxed text-muted md:col-span-5 md:col-start-8 md:pt-2 md:text-lg">
               <p data-reveal>{intro[1]}</p>
               <p data-reveal className="text-fg">
@@ -121,12 +140,10 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="md:col-span-8 md:col-start-5">
-            <p
-              data-reveal
+            <InkText
+              text={mission[0]}
               className="wdth-wide text-[clamp(1.75rem,3.6vw,3.5rem)] font-[560] leading-[1.08] tracking-[-0.03em] text-fg"
-            >
-              {mission[0]}
-            </p>
+            />
             <p
               data-reveal
               className="mt-10 max-w-xl border-l border-olive pl-6 text-lg leading-relaxed text-fg/80 md:mt-14"
@@ -140,7 +157,8 @@ export default function AboutPage() {
       {/* Vision: single centred serif statement between fine rules */}
       <section
         aria-labelledby="vision-heading"
-        className="wash-cyan"
+        data-parallax-row
+        className="wash-cyan overflow-hidden"
       >
         <div className="container-edge">
           <div className="border-y border-line py-16 text-center md:py-28">
@@ -152,7 +170,7 @@ export default function AboutPage() {
               Vision
             </h2>
             <p
-              data-reveal
+              data-speed="0.08"
               className="mx-auto mt-10 max-w-[18ch] font-serif text-[clamp(2.4rem,6.2vw,6rem)] italic leading-[1.02] tracking-[-0.02em] text-fg md:mt-14"
             >
               {vision}
@@ -178,6 +196,6 @@ export default function AboutPage() {
         </div>
         <ValuesStatement values={values} />
       </section>
-    </>
+    </Parallax>
   );
 }
