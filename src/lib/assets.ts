@@ -49,6 +49,7 @@ export function getGallery(): GalleryImage[] {
   return site.gallery.filter((img) => publicFileExists(img.src) && img.alt.trim().length > 0);
 }
 
-export function getHeroFrames() {
-  return site.heroFrames.filter((f) => publicFileExists(f.src));
+export function getHeroSequence() {
+  const seq = site.heroSequence;
+  return seq.count > 0 && publicFileExists(`${seq.path}/001.webp`) ? seq : undefined;
 }

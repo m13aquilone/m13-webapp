@@ -42,7 +42,7 @@ All content lives in **`src/content/site.ts`**; image paths start with `/assets/
 | Gallery photos | `assets-src/gallery/` | `npm run gallery` | automatic (`src/content/gallery.json`) |
 | Business and partner logos | `assets-src/brand/`, `assets-src/partners/` | `node scripts/prepare-logos.mjs` | `verticals[n].logo`, `partners` |
 | Visionary photos (transparent PNG) | `assets-src/visionaries/` | `node scripts/prepare-portraits.mjs` | `visionaries[n].photo` |
-| Hero images | `assets-src/hero/` | `node scripts/prepare-hero.mjs` | `heroFrames` |
+| Hero video frames | `assets-src/hero-video-frames/` | `node scripts/prepare-hero-frames.mjs` | automatic (`src/content/hero-frames.json`) |
 
 ### Gallery
 
@@ -66,15 +66,11 @@ Light theme with military green and cyan accents; colours are `@theme` tokens in
 
 ## Hero scroll sequence
 
-`heroFrames` in `site.ts` lists the images, in order; each `caption` (Strength, Nourish, Restore) shows next to the step counter in the hero's bottom rail. `heroTransition` picks how one image becomes the next as you scroll:
+The hero plays a frame sequence like a video as you scroll through it. Put the frames (JPEG/PNG/WebP, in filename order) in `assets-src/hero-video-frames/` and run `node scripts/prepare-hero-frames.mjs`: it writes `001.webp`, `002.webp`, … (max 1280 px wide) to `public/assets/hero/frames/` and records the count and size in `src/content/hero-frames.json`. The alt text is `heroSequence.alt` in `site.ts`.
 
-| Value | Effect |
-| --- | --- |
-| `"liquid"` (default) | The image ripples and melts upward into the next through flowing noise, with slight colour fringing and a thin cyan edge. WebGL shader in `liquid.ts`; falls back to a crossfade without WebGL. |
-| `"prism"` | The image is cut into vertical slats that turn in 3D, one after another, to reveal the next. CSS 3D only. |
-| `"particles"` | The image dissolves into glowing dust that re-forms as the next. Designed for dark backgrounds; it does not show on the light theme. |
+The hero stays pinned until frame `heroSequence.releaseAt` (90); the remaining frames play while it scrolls away. Near-white in every frame is lifted to pure white.
 
-The hero images are cut-outs on a transparent background, so they sit directly on the page. `scripts/prepare-hero.mjs` crops each source in `assets-src/hero/` to 4:3 at 1920 × 1440 and removes its light studio background. With reduced motion, only the first image is shown. Code: `src/components/hero/`.
+Frames are drawn on a canvas with a multiply blend, so a white background takes on the page colour. Frame 1 loads first and is all that is shown with reduced motion; the rest load in order in the background. Code: `src/components/hero/Hero.tsx`.
 
 ## Known limitations
 

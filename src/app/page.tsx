@@ -5,7 +5,7 @@ import { Verticals } from "@/components/home/Verticals";
 import { Visionaries } from "@/components/home/Visionaries";
 import { Hero } from "@/components/hero/Hero";
 import { copy, site } from "@/content/site";
-import { getHeroFrames, getPartners, getVerticals, getVisionaries } from "@/lib/assets";
+import { getHeroSequence, getPartners, getVerticals, getVisionaries } from "@/lib/assets";
 
 export const metadata: Metadata = {
   title: { absolute: `${site.company.displayName} | ${copy.hero.headline.join(" ")}` },
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <Hero frames={getHeroFrames()} transition={site.heroTransition} />
+      <Hero sequence={getHeroSequence()} />
       <Verticals verticals={getVerticals()} />
       <Visionaries visionaries={getVisionaries()} />
       <Partners partners={getPartners()} />
