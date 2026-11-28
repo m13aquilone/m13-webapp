@@ -179,7 +179,8 @@ export const site: SiteConfig = {
     category,
   })),
 
-  careersEndpoint: undefined,
+  careersEndpoint:
+    "https://script.google.com/macros/s/AKfycbzKFNQOMUuZAbDM_c_s61AC10WluyhUe9k8jDyLXG0Ge5TfAhp6Dwg3sdH2VFEIwy7j/exec",
 
   heroSequence: {
     ...heroFramesManifest,
