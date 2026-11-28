@@ -72,6 +72,17 @@ The hero stays pinned until frame `heroSequence.releaseAt` (90); the remaining f
 
 Frames are drawn on a canvas with a multiply blend, so a white background takes on the page colour. Frame 1 loads first and is all that is shown with reduced motion; the rest load in order in the background. Code: `src/components/hero/Hero.tsx`.
 
+## Careers form
+
+The form on `/careers` (name, email, phone, "Tell us about you") posts straight to a Google Apps Script web app, which appends each submission as a row in a Google Sheet. No server is involved, so it works on static hosting.
+
+1. Create a Google Sheet (for example "M13 Careers").
+2. In the sheet: **Extensions → Apps Script**. Replace the editor contents with `google-apps-script/careers.gs` and save.
+3. **Deploy → New deployment →** type **Web app**. Execute as: **Me**. Who has access: **Anyone**. Deploy and allow the permissions it asks for.
+4. Copy the **Web app URL** (ends in `/exec`) into `careersEndpoint` in `src/content/site.ts`, then rebuild and deploy the site.
+
+Submissions land in an "Applications" tab (created automatically) with the columns Submitted at, Name, Email, Phone, About. If you edit the script later, use **Deploy → Manage deployments → Edit → New version** so the URL stays the same. Until `careersEndpoint` is set, the page shows the company email instead of the form.
+
 ## Known limitations
 
 - Entrance reveals use CSS scroll-driven animations. Browsers without support show content immediately, without the fade.
